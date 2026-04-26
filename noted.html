@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#E8EDF2" id="theme-meta">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Noted">
+<title>Noted</title>
+<link rel="manifest" href="#" id="manifest-link">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Livvic:wght@700&family=Afacad:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:           #E8EDF2;
+    --bg2:          #F2F5F8;
+    --text:         #2C3947;
+    --text-muted:   #7A90A0;
+    --text-dim:     #B0C0CC;
+    --accent:       #547A95;
+    --accent-dark:  #3D5F75;
+    --accent2:      #C2A56D;
+    --glass:        rgba(255,255,255,0.70);
+    --glass-hover:  rgba(255,255,255,0.88);
+    --glass-border: rgba(255,255,255,0.85);
+    --shadow:       rgba(44,57,71,0.10);
+    --header-bg:    rgba(232,237,242,0.82);
+    --input-bg:     rgba(232,237,242,0.88);
+    --modal-bg:     rgba(244,246,248,0.97);
+    --handle:       rgba(84,122,149,0.20);
+    --tag-bg:       rgba(84,122,149,0.10);
+    --tag-border:   rgba(84,122,149,0.22);
+    --radius:       18px;
+    --radius-sm:    14px;
+    --font-head:    'Livvic', sans-serif;
+    --font-body:    'Afacad', sans-serif;
+  }
+
+  [data-theme="dark"] {
+    --bg:           #1A2330;
+    --bg2:          #222E3C;
+    --text:         #D8E4EC;
+    --text-muted:   #7A90A0;
+    --text-dim:     #3A4F5E;
+    --accent:       #547A95;
+    --accent-dark:  #6B98B5;
+    --accent2:      #C2A56D;
+    --glass:        rgba(44,57,71,0.65);
+    --glass-hover:  rgba(44,57,71,0.85);
+    --glass-border: rgba(84,122,149,0.22);
+    --shadow:       rgba(0,0,0,0.28);
+    --header-bg:    rgba(26,35,48,0.88);
+    --input-bg:     rgba(26,35,48,0.92);
+    --modal-bg:     rgba(30,42,56,0.98);
+    --handle:       rgba(84,122,149,0.28);
+    --tag-bg:       rgba(84,122,149,0.15);
+    --tag-border:   rgba(84,122,149,0.32);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+    color: var(--text);
+    transition: background 0.25s, color 0.25s;
+  }
+
+  body { display: flex; flex-direction: column; min-height: 100dvh; max-width: 680px; margin: 0 auto; }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    padding: 16px 20px 12px;
+    background: var(--header-bg);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--glass-border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .header-left { display: flex; align-items: baseline; gap: 10px; }
+  .logo { font-family: var(--font-head); font-size: 22px; color: var(--text); }
+  .logo span { color: var(--accent2); }
+  .date-display { font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--text-muted); }
+  .header-actions { display: flex; gap: 8px; }
+
+  .icon-btn {
+    background: var(--glass); border: 1px solid var(--glass-border); border-radius: 10px;
+    color: var(--accent); cursor: pointer; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; box-shadow: 0 1px 4px var(--shadow);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .icon-btn:hover { background: var(--glass-hover); }
+  .icon-btn svg { width: 16px; height: 16px; }
+
+  main { flex: 1; overflow-y: auto; padding: 16px 16px 0; }
+
+  .day-label {
+    font-family: var(--font-body); font-size: 13px; font-weight: 600;
+    color: var(--accent2); text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 0 2px; margin-bottom: 8px;
+  }
+  .day-group { margin-bottom: 20px; }
+
+  .entry {
+    background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+    padding: 12px 14px; margin-bottom: 8px;
+    display: flex; gap: 10px; align-items: flex-start;
+    box-shadow: 0 2px 8px var(--shadow); transition: background 0.15s; position: relative;
+  }
+  .entry::before {
+    content: ''; position: absolute; left: 0; top: 10px; bottom: 10px;
+    width: 3px; background: var(--bullet-color, var(--accent));
+    border-radius: 0 2px 2px 0; opacity: 0.6;
+  }
+  .entry:hover { background: var(--glass-hover); }
+
+  .entry-time { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--text-muted); min-width: 44px; flex-shrink: 0; padding-top: 2px; }
+  .bullet-sym { font-size: 15px; line-height: 1.4; color: var(--bullet-color, var(--accent)); flex-shrink: 0; font-weight: 600; }
+  .entry-body { flex: 1; min-width: 0; }
+  .entry-text { font-family: var(--font-body); font-size: 15px; line-height: 1.55; color: var(--text); word-break: break-word; white-space: pre-wrap; }
+
+  .entry-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .tag { font-family: var(--font-body); font-size: 11px; font-weight: 600; color: var(--accent); background: var(--tag-bg); border: 1px solid var(--tag-border); border-radius: 6px; padding: 2px 7px; }
+
+  .entry-delete { background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 2px; opacity: 0; transition: all 0.15s; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+  .entry:hover .entry-delete { opacity: 1; }
+  .entry-delete:hover { color: #c0392b; }
+  .entry-delete svg { width: 14px; height: 14px; }
+
+  .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; gap: 14px; }
+  .empty-icon { width: 72px; height: 72px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px var(--shadow); }
+  .empty-icon svg { width: 28px; height: 28px; color: var(--accent); }
+  .empty-title { font-family: var(--font-head); font-size: 20px; color: var(--text); text-align: center; }
+  .empty-sub { font-family: var(--font-body); font-size: 14px; color: var(--text-muted); text-align: center; line-height: 1.5; }
+
+  .input-area {
+    position: sticky; bottom: 0; z-index: 100;
+    background: var(--input-bg);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--glass-border);
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0));
+  }
+
+  .type-selector { display: flex; gap: 6px; margin-bottom: 8px; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
+  .type-selector::-webkit-scrollbar { display: none; }
+
+  .type-btn {
+    background: var(--glass); border: 1px solid var(--glass-border); border-radius: 30px;
+    color: var(--text-muted); cursor: pointer; padding: 5px 13px;
+    font-size: 13px; font-family: var(--font-body); font-weight: 600;
+    display: flex; align-items: center; gap: 5px; transition: all 0.15s;
+    white-space: nowrap; flex-shrink: 0; box-shadow: 0 1px 3px var(--shadow);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .type-btn.active       { background: var(--accent);  border-color: var(--accent);  color: #fff; box-shadow: 0 2px 8px rgba(84,122,149,0.40); }
+  .type-btn.active.task  { background: #4A8C6A; border-color: #4A8C6A; box-shadow: 0 2px 8px rgba(74,140,106,0.35); }
+  .type-btn.active.event { background: #7B6CA8; border-color: #7B6CA8; box-shadow: 0 2px 8px rgba(123,108,168,0.35); }
+  .type-btn.active.idea  { background: var(--accent2); border-color: var(--accent2); color: #fff; box-shadow: 0 2px 8px rgba(194,165,109,0.40); }
+
+  .input-row { display: flex; gap: 8px; align-items: flex-end; }
+
+  #entry-input {
+    flex: 1; background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+    color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+    padding: 11px 16px; resize: none; min-height: 44px; max-height: 120px; outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s; box-shadow: 0 1px 4px var(--shadow);
+  }
+  #entry-input::placeholder { color: var(--text-dim); }
+  #entry-input:focus { border-color: rgba(84,122,149,0.50); box-shadow: 0 0 0 3px rgba(84,122,149,0.12); }
+
+  .submit-btn {
+    background: var(--accent); border: none; border-radius: var(--radius-sm); color: #fff; cursor: pointer;
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(84,122,149,0.40); transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+  }
+  .submit-btn:hover { background: var(--accent-dark); }
+  .submit-btn:active { transform: scale(0.95); }
+  .submit-btn svg { width: 18px; height: 18px; }
+
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(26,35,48,0.45);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    z-index: 200; display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--modal-bg); border: 1px solid var(--glass-border);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 16px 20px calc(24px + env(safe-area-inset-bottom,0));
+    width: 100%; max-width: 680px;
+    transform: translateY(20px); transition: transform 0.2s ease;
+    box-shadow: 0 -4px 24px var(--shadow);
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-handle { width: 36px; height: 4px; background: var(--handle); border-radius: 99px; margin: 0 auto 16px; }
+  .modal h2 { font-family: var(--font-head); font-size: 18px; color: var(--text); margin-bottom: 12px; }
+
+  .export-preview {
+    background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+    padding: 12px 14px; font-family: monospace; font-size: 11px; color: var(--text-muted);
+    line-height: 1.7; max-height: 180px; overflow-y: auto; margin-bottom: 14px; white-space: pre-wrap;
+  }
+  .modal-actions { display: flex; gap: 8px; }
+  .modal-btn {
+    flex: 1; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 30px;
+    color: var(--text); cursor: pointer; padding: 12px 16px;
+    font-size: 14px; font-family: var(--font-body); font-weight: 600;
+    transition: all 0.15s; box-shadow: 0 1px 4px var(--shadow); -webkit-tap-highlight-color: transparent;
+  }
+  .modal-btn:hover { background: var(--glass-hover); }
+  .modal-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(84,122,149,0.40); }
+  .modal-btn.primary:hover { background: var(--accent-dark); }
+
+  .toast {
+    position: fixed; bottom: calc(90px + env(safe-area-inset-bottom, 0)); left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: var(--accent); color: #fff;
+    font-family: var(--font-body); font-weight: 600; font-size: 13px;
+    padding: 8px 18px; border-radius: 30px; box-shadow: 0 4px 16px rgba(84,122,149,0.35);
+    opacity: 0; transition: all 0.2s ease; z-index: 300; white-space: nowrap; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--handle); border-radius: 2px; }
+
+  .entry[data-type="note"]  { --bullet-color: #547A95; }
+  .entry[data-type="task"]  { --bullet-color: #4A8C6A; }
+  .entry[data-type="event"] { --bullet-color: #7B6CA8; }
+  .entry[data-type="idea"]  { --bullet-color: #C2A56D; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <span class="logo">Noted<span>.</span></span>
+    <span class="date-display" id="header-date"></span>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn" id="theme-btn" title="Toggle dark mode">
+      <svg id="icon-sun" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
+      <svg id="icon-moon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+    </button>
+    <button class="icon-btn" id="export-btn" title="Export JSON">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+    </button>
+    <button class="icon-btn" id="clear-btn" title="Clear today">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="entries-container"></main>
+
+<div class="input-area">
+  <div class="type-selector" id="type-selector">
+    <button class="type-btn active note" data-type="note">· note</button>
+    <button class="type-btn task" data-type="task">○ task</button>
+    <button class="type-btn event" data-type="event">◇ event</button>
+    <button class="type-btn idea" data-type="idea">★ idea</button>
+  </div>
+  <div class="input-row">
+    <textarea id="entry-input" placeholder="capture a thought…" rows="1"></textarea>
+    <button class="submit-btn" id="submit-btn" aria-label="Add entry">
+      <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2>Export entries</h2>
+    <div class="export-preview" id="export-preview"></div>
+    <div class="modal-actions">
+      <button class="modal-btn" id="modal-close">Cancel</button>
+      <button class="modal-btn primary" id="modal-copy">Copy</button>
+      <button class="modal-btn primary" id="modal-download">Download</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'noted_entries';
+const THEME_KEY   = 'noted_theme';
+let selectedType  = 'note';
+let entries       = [];
+const SYMBOLS = { note: '·', task: '○', event: '◇', idea: '★' };
+
+function applyTheme(dark) {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  document.getElementById('icon-sun').style.display  = dark ? 'block' : 'none';
+  document.getElementById('icon-moon').style.display = dark ? 'none'  : 'block';
+  document.querySelector('meta[name="theme-color"]').content = dark ? '#1A2330' : '#E8EDF2';
+  localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light');
+}
+const savedTheme  = localStorage.getItem(THEME_KEY);
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+applyTheme(savedTheme ? savedTheme === 'dark' : prefersDark);
+document.getElementById('theme-btn').addEventListener('click', () => {
+  applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
+});
+
+function load() { try { entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { entries = []; } }
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
+function fmtTime(ts) { return new Date(ts).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
+function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function fmtDay(ts) {
+  const d = new Date(ts), today = new Date();
+  if (d.toDateString() === today.toDateString()) return 'Today';
+  const y = new Date(today); y.setDate(today.getDate()-1);
+  if (d.toDateString() === y.toDateString()) return 'Yesterday';
+  return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+}
+function getTags(text) { return [...text.matchAll(/#(\w+)/g)].map(m => m[1]); }
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function render() {
+  const c = document.getElementById('entries-container');
+  if (!entries.length) {
+    c.innerHTML = `<div class="empty-state">
+      <div class="empty-icon"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0118 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg></div>
+      <p class="empty-title">Nothing noted yet</p>
+      <p class="empty-sub">Capture notes, tasks, events and ideas.<br>Everything gets a timestamp automatically.</p>
+    </div>`; return;
+  }
+  const groups = {};
+  [...entries].reverse().forEach(e => { const k = dayKey(e.timestamp); if (!groups[k]) groups[k] = []; groups[k].push(e); });
+  c.innerHTML = Object.entries(groups).map(([,day]) => {
+    const rows = day.map(e => {
+      const tags = getTags(e.text);
+      const th = tags.length ? `<div class="entry-tags">${tags.map(t=>`<span class="tag">#${t}</span>`).join('')}</div>` : '';
+      return `<div class="entry" data-type="${e.type}" data-id="${e.id}">
+        <span class="entry-time">${fmtTime(e.timestamp)}</span>
+        <span class="bullet-sym">${SYMBOLS[e.type]}</span>
+        <div class="entry-body"><div class="entry-text">${esc(e.text)}</div>${th}</div>
+        <button class="entry-delete" onclick="del('${e.id}')" title="Delete">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>`;
+    }).join('');
+    return `<div class="day-group"><div class="day-label">${fmtDay(day[0].timestamp)}</div>${rows}</div>`;
+  }).join('');
+}
+
+function add(text) {
+  text = text.trim(); if (!text) return;
+  entries.push({ id: (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2)), timestamp: Date.now(), type: selectedType, text });
+  save(); render(); document.querySelector('main').scrollTop = 0;
+}
+function del(id) { entries = entries.filter(e => e.id !== id); save(); render(); }
+
+function buildExport() {
+  const days = {};
+  entries.forEach(e => { const k = dayKey(e.timestamp); if (!days[k]) days[k]=[]; days[k].push({ time: fmtTime(e.timestamp), timestamp: e.timestamp, type: e.type, text: e.text, tags: getTags(e.text) }); });
+  return { exported_at: new Date().toISOString(), app: 'noted', version: '1.0.0', note: 'Paste into Claude: "Convert this Noted JSON into an Obsidian Daily Note in markdown"', days };
+}
+function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2400); }
+
+document.getElementById('type-selector').addEventListener('click', e => {
+  const btn = e.target.closest('.type-btn'); if (!btn) return;
+  selectedType = btn.dataset.type;
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+});
+
+const ta = document.getElementById('entry-input');
+ta.addEventListener('input', function() { this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,120)+'px'; });
+ta.addEventListener('keydown', e => { if (e.key==='Enter'&&!e.shiftKey) { e.preventDefault(); add(ta.value); ta.value=''; ta.style.height='auto'; } });
+document.getElementById('submit-btn').addEventListener('click', () => { add(ta.value); ta.value=''; ta.style.height='auto'; ta.focus(); });
+
+document.getElementById('export-btn').addEventListener('click', () => {
+  document.getElementById('export-preview').textContent = JSON.stringify(buildExport(),null,2);
+  document.getElementById('modal-overlay').classList.add('open');
+});
+document.getElementById('modal-close').addEventListener('click', () => document.getElementById('modal-overlay').classList.remove('open'));
+document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
+document.getElementById('modal-copy').addEventListener('click', () => {
+  navigator.clipboard.writeText(JSON.stringify(buildExport(),null,2)).then(()=>{ toast('Copied ✓'); document.getElementById('modal-overlay').classList.remove('open'); });
+});
+document.getElementById('modal-download').addEventListener('click', () => {
+  const blob=new Blob([JSON.stringify(buildExport(),null,2)],{type:'application/json'});
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:`noted-${dayKey(Date.now())}.json`});
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('Downloaded ✓'); document.getElementById('modal-overlay').classList.remove('open');
+});
+document.getElementById('clear-btn').addEventListener('click', () => {
+  const tk=dayKey(Date.now()), n=entries.filter(e=>dayKey(e.timestamp)===tk).length;
+  if (!n) { toast('Nothing to clear'); return; }
+  if (confirm(`Clear ${n} entr${n===1?'y':'ies'} from today?`)) { entries=entries.filter(e=>dayKey(e.timestamp)!==tk); save(); render(); toast('Today cleared'); }
+});
+
+document.getElementById('header-date').textContent = new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+
+const mf={name:'Noted',short_name:'Noted',description:'Timestamped bullet journal',start_url:'./',display:'standalone',background_color:'#E8EDF2',theme_color:'#E8EDF2'};
+document.getElementById('manifest-link').href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:'application/json'}));
+if ('serviceWorker' in navigator) {
+  const sw=`const C='noted-v1';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['/'])));self.skipWaiting();});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));});`;
+  navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
+}
+
+load(); render();
+</script>
+<!-- MIT License — Copyright (c) 2025 Lucas Correia — see full text at opensource.org/licenses/MIT -->
+</body>
+</html>
