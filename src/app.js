@@ -19,7 +19,8 @@ const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
 
 function applyTheme(dark) {
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-  document.querySelector('meta[name="theme-color"]').content = dark ? '#1A2330' : '#E8EDF2';
+  const colour = dark ? '#1A2330' : '#E8EDF2';
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = colour);
 }
 
 function updateThemeIcon() {
