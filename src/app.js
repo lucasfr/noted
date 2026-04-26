@@ -10,21 +10,43 @@ let selectedType = 'note';
 let entries      = [];
 
 // ── Theme ────────────────────────────────────────────────────────────────────
+// Three states stored in localStorage: 'light' | 'dark' | null (= auto/system)
+
+const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
+
 function applyTheme(dark) {
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-  document.getElementById('icon-sun').style.display  = dark ? 'block' : 'none';
-  document.getElementById('icon-moon').style.display = dark ? 'none'  : 'block';
   document.querySelector('meta[name="theme-color"]').content = dark ? '#1A2330' : '#E8EDF2';
-  localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light');
 }
 
-const savedTheme  = localStorage.getItem(THEME_KEY);
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-applyTheme(savedTheme ? savedTheme === 'dark' : prefersDark);
+function updateThemeIcon() {
+  const saved = localStorage.getItem(THEME_KEY);
+  document.getElementById('icon-auto').style.display = !saved            ? 'block' : 'none';
+  document.getElementById('icon-sun').style.display  = saved === 'light' ? 'block' : 'none';
+  document.getElementById('icon-moon').style.display = saved === 'dark'  ? 'block' : 'none';
+}
 
+function resolveTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  applyTheme(saved ? saved === 'dark' : systemDark.matches);
+  updateThemeIcon();
+}
+
+// Cycle: auto → light → dark → auto
 document.getElementById('theme-btn').addEventListener('click', () => {
-  applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
+  const saved = localStorage.getItem(THEME_KEY);
+  if (!saved)                 localStorage.setItem(THEME_KEY, 'light');
+  else if (saved === 'light') localStorage.setItem(THEME_KEY, 'dark');
+  else                        localStorage.removeItem(THEME_KEY);
+  resolveTheme();
 });
+
+// React to OS theme changes if no manual override is set
+systemDark.addEventListener('change', () => {
+  if (!localStorage.getItem(THEME_KEY)) resolveTheme();
+});
+
+resolveTheme();
 
 // ── Storage ──────────────────────────────────────────────────────────────────
 function load() {
