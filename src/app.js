@@ -3,15 +3,15 @@ import './style.css';
 // ── Constants ────────────────────────────────────────────────────────────────
 const STORAGE_KEY = 'noted_entries';
 const THEME_KEY   = 'noted_theme';
+const PRIVACY_KEY = 'noted_privacy';
 const SYMBOLS     = { note: '·', task: '○', event: '◇', idea: '★' };
 
 // ── State ────────────────────────────────────────────────────────────────────
 let selectedType = 'note';
 let entries      = [];
+let privacyOn    = localStorage.getItem(PRIVACY_KEY) === 'true';
 
 // ── Theme ────────────────────────────────────────────────────────────────────
-// Three states stored in localStorage: 'light' | 'dark' | null (= auto/system)
-
 const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
 
 function applyTheme(dark) {
@@ -41,12 +41,40 @@ document.getElementById('theme-btn').addEventListener('click', () => {
   resolveTheme();
 });
 
-// React to OS theme changes if no manual override is set
 systemDark.addEventListener('change', () => {
   if (!localStorage.getItem(THEME_KEY)) resolveTheme();
 });
 
 resolveTheme();
+
+// ── Privacy mode ─────────────────────────────────────────────────────────────
+const BLUR_DELAY = 4000; // ms before a new entry blurs after being saved
+let blurTimers   = {};
+
+function applyPrivacyUI() {
+  document.body.classList.toggle('privacy-on', privacyOn);
+  document.getElementById('icon-eye').style.display       = privacyOn ? 'none'  : 'block';
+  document.getElementById('icon-eye-slash').style.display = privacyOn ? 'block' : 'none';
+  document.getElementById('privacy-btn').classList.toggle('privacy-active', privacyOn);
+}
+
+function scheduleBlur(id) {
+  if (!privacyOn) return;
+  clearTimeout(blurTimers[id]);
+  blurTimers[id] = setTimeout(() => {
+    const el = document.querySelector(`.entry[data-id="${id}"]`);
+    if (el) el.querySelectorAll('.entry-text, .entry-time, .bullet-sym, .tag').forEach(n => n.classList.add('blurring'));
+  }, BLUR_DELAY);
+}
+
+document.getElementById('privacy-btn').addEventListener('click', () => {
+  privacyOn = !privacyOn;
+  localStorage.setItem(PRIVACY_KEY, privacyOn);
+  applyPrivacyUI();
+  if (!privacyOn) Object.values(blurTimers).forEach(clearTimeout);
+});
+
+applyPrivacyUI();
 
 // ── Storage ──────────────────────────────────────────────────────────────────
 function load() {
@@ -106,7 +134,6 @@ function render() {
     return;
   }
 
-  // Group entries by day, most recent first
   const groups = {};
   [...entries].reverse().forEach(e => {
     const k = dayKey(e.timestamp);
@@ -116,11 +143,10 @@ function render() {
 
   container.innerHTML = Object.entries(groups).map(([, day]) => {
     const rows = day.map(e => {
-      const tags    = getTags(e.text);
+      const tags     = getTags(e.text);
       const tagsHtml = tags.length
         ? `<div class="entry-tags">${tags.map(t => `<span class="tag">#${t}</span>`).join('')}</div>`
         : '';
-
       return `
         <div class="entry" data-type="${e.type}" data-id="${e.id}">
           <span class="entry-time">${fmtTime(e.timestamp)}</span>
@@ -136,11 +162,9 @@ function render() {
           </button>
         </div>`;
     }).join('');
-
     return `<div class="day-group"><div class="day-label">${fmtDay(day[0].timestamp)}</div>${rows}</div>`;
   }).join('');
 
-  // Attach delete listeners (avoids inline onclick)
   container.querySelectorAll('.entry-delete').forEach(btn => {
     btn.addEventListener('click', () => deleteEntry(btn.dataset.id));
   });
@@ -161,6 +185,7 @@ function addEntry(text) {
   save();
   render();
   document.querySelector('main').scrollTop = 0;
+  if (privacyOn) scheduleBlur(entries[entries.length - 1].id);
 }
 
 function deleteEntry(id) {
@@ -289,3 +314,10 @@ document.getElementById('header-date').textContent = new Date().toLocaleDateStri
 // ── Init ──────────────────────────────────────────────────────────────────────
 load();
 render();
+// If privacy was on from a previous session, blur all entries immediately
+if (privacyOn) {
+  entries.forEach(e => {
+    const el = document.querySelector(`.entry[data-id="${e.id}"]`);
+    if (el) el.querySelectorAll('.entry-text, .entry-time, .bullet-sym, .tag').forEach(n => n.classList.add('blurring'));
+  });
+}
