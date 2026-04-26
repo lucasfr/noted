@@ -11,7 +11,8 @@ const SYMBOLS     = { note: '·', task: '○', event: '◇', idea: '★' };
 let selectedType = 'note';
 let entries      = [];
 let privacyOn    = localStorage.getItem(PRIVACY_KEY) === 'true';
-let sortAsc      = localStorage.getItem(SORT_KEY) === 'true'; // false = newest first (default)
+let sortAsc      = localStorage.getItem(SORT_KEY) === 'true';
+let editingId    = null; // id of entry currently being edited
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -34,7 +35,6 @@ function resolveTheme() {
   updateThemeIcon();
 }
 
-// Cycle: auto → light → dark → auto
 document.getElementById('theme-btn').addEventListener('click', () => {
   const saved = localStorage.getItem(THEME_KEY);
   if (!saved)                 localStorage.setItem(THEME_KEY, 'light');
@@ -138,6 +138,93 @@ function esc(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+// ── Inline editing ────────────────────────────────────────────────────────────
+function startEdit(id) {
+  if (editingId) commitEdit(editingId); // save any open edit first
+  editingId = id;
+
+  const entry = entries.find(e => e.id === id);
+  if (!entry) return;
+
+  const el = document.querySelector(`.entry[data-id="${id}"]`);
+  if (!el) return;
+
+  el.classList.add('editing');
+
+  // Replace entry-body with an edit zone
+  const body = el.querySelector('.entry-body');
+  body.innerHTML = `
+    <textarea class="entry-edit-input" rows="1">${entry.text}</textarea>
+    <div class="entry-edit-types">
+      ${Object.entries(SYMBOLS).map(([type, sym]) => `
+        <button class="entry-type-pill ${type === entry.type ? 'active' : ''}" data-type="${type}">${sym} ${type}</button>
+      `).join('')}
+    </div>
+    <div class="entry-edit-actions">
+      <button class="entry-edit-save">Save</button>
+      <button class="entry-edit-cancel">Cancel</button>
+    </div>`;
+
+  // Track the type being edited
+  el.dataset.editType = entry.type;
+
+  // Auto-resize textarea
+  const ta = body.querySelector('.entry-edit-input');
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 200) + 'px';
+  ta.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+  });
+  ta.focus();
+  ta.setSelectionRange(ta.value.length, ta.value.length);
+
+  // Keyboard shortcuts
+  ta.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); commitEdit(id); }
+    if (e.key === 'Escape') { cancelEdit(id); }
+  });
+
+  // Type pills
+  body.querySelectorAll('.entry-type-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      body.querySelectorAll('.entry-type-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      el.dataset.editType = pill.dataset.type;
+    });
+  });
+
+  // Save / cancel buttons
+  body.querySelector('.entry-edit-save').addEventListener('click', () => commitEdit(id));
+  body.querySelector('.entry-edit-cancel').addEventListener('click', () => cancelEdit(id));
+}
+
+function commitEdit(id) {
+  const el = document.querySelector(`.entry[data-id="${id}"]`);
+  if (!el) { editingId = null; return; }
+
+  const ta      = el.querySelector('.entry-edit-input');
+  const newText = ta ? ta.value.trim() : null;
+  const newType = el.dataset.editType;
+
+  if (newText) {
+    const idx = entries.findIndex(e => e.id === id);
+    if (idx !== -1) {
+      entries[idx].text = newText;
+      entries[idx].type = newType;
+      save();
+    }
+  }
+
+  editingId = null;
+  render();
+}
+
+function cancelEdit(id) {
+  editingId = null;
+  render();
+}
+
 // ── Render ───────────────────────────────────────────────────────────────────
 function render() {
   const container = document.getElementById('entries-container');
@@ -158,7 +245,6 @@ function render() {
     return;
   }
 
-  // Group entries by day
   const groups = {};
   entries.forEach(e => {
     const k = dayKey(e.timestamp);
@@ -166,7 +252,6 @@ function render() {
     groups[k].push(e);
   });
 
-  // Sort day groups and entries within each group according to sortAsc
   const sortedGroups = Object.entries(groups)
     .sort(([a], [b]) => sortAsc ? a.localeCompare(b) : b.localeCompare(a));
 
@@ -183,7 +268,7 @@ function render() {
           <span class="entry-time">${fmtTime(e.timestamp)}</span>
           <span class="bullet-sym">${SYMBOLS[e.type]}</span>
           <div class="entry-body">
-            <div class="entry-text">${esc(e.text)}</div>
+            <div class="entry-text" title="Click to edit">${esc(e.text)}</div>
             ${tagsHtml}
           </div>
           <button class="entry-delete" data-id="${e.id}" title="Delete">
@@ -197,15 +282,26 @@ function render() {
     return `<div class="day-group"><div class="day-label">${fmtDay(day[0].timestamp)}</div>${rows}</div>`;
   }).join('');
 
+  // Click on entry-text to edit
+  container.querySelectorAll('.entry-text').forEach(el => {
+    el.addEventListener('click', () => {
+      const entryEl = el.closest('.entry');
+      startEdit(entryEl.dataset.id);
+    });
+  });
+
   container.querySelectorAll('.entry-delete').forEach(btn => {
     btn.addEventListener('click', () => deleteEntry(btn.dataset.id));
   });
 
-  // Re-apply blur to entries that were already blurred before this render
+  // Re-apply blur
   blurredIds.forEach(id => {
     const el = document.querySelector(`.entry[data-id="${id}"]`);
     if (el) el.querySelectorAll('.entry-text, .tag').forEach(n => n.classList.add('blurring'));
   });
+
+  // Restore edit state if a render happened mid-edit
+  if (editingId) startEdit(editingId);
 }
 
 // ── Actions ──────────────────────────────────────────────────────────────────
@@ -222,13 +318,13 @@ function addEntry(text) {
 
   save();
   render();
-  // Scroll to bottom when oldest-first, top when newest-first
   const main = document.querySelector('main');
   main.scrollTop = sortAsc ? main.scrollHeight : 0;
   if (privacyOn) scheduleBlur(entries[entries.length - 1].id);
 }
 
 function deleteEntry(id) {
+  if (editingId === id) editingId = null;
   entries = entries.filter(e => e.id !== id);
   blurredIds.delete(id);
   clearTimeout(blurTimers[id]);

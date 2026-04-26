@@ -291,6 +291,83 @@ main { flex: 1; overflow-y: auto; padding: 16px 16px 0; }
   transition: filter 0.2s ease;
 }
 
+/* ── Inline editing ── */
+.entry-text { cursor: pointer; }
+.entry-text:hover { opacity: 0.75; }
+
+.entry.editing { background: var(--glass-hover); }
+.entry.editing .entry-text { display: none; }
+.entry.editing .entry-tags { display: none; }
+
+.entry-edit-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+  resize: none;
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.entry-edit-types {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.entry-type-pill {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 3px 10px;
+  transition: all 0.15s;
+}
+.entry-type-pill:hover { color: var(--accent2); }
+.entry-type-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.entry-type-pill.active[data-type="task"]  { background: #4A8C6A; border-color: #4A8C6A; }
+.entry-type-pill.active[data-type="event"] { background: #7B6CA8; border-color: #7B6CA8; }
+.entry-type-pill.active[data-type="idea"]  { background: var(--accent2); border-color: var(--accent2); }
+
+.entry-edit-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.entry-edit-save,
+.entry-edit-cancel {
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 14px;
+  transition: all 0.15s;
+  border: 1px solid var(--glass-border);
+}
+
+.entry-edit-save {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.entry-edit-save:hover { background: var(--accent-dark); }
+
+.entry-edit-cancel {
+  background: var(--glass);
+  color: var(--text-muted);
+}
+.entry-edit-cancel:hover { color: var(--accent2); }
+
 /* ── Misc ── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
