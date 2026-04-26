@@ -200,7 +200,8 @@ main { flex: 1; overflow-y: auto; padding: 16px 16px 0; }
 .entry:hover { background: var(--glass-hover); }
 
 .entry-time { font-family: var(--font-body); font-size: 14px; font-weight: 500; color: var(--text-muted); min-width: 52px; flex-shrink: 0; padding-top: 2px; }
-.bullet-sym { font-size: 18px; line-height: 1.4; color: var(--bullet-color, var(--accent)); flex-shrink: 0; font-weight: 600; }
+.bullet-sym { width: 20px; display: flex; align-items: center; justify-content: center; color: var(--bullet-color, var(--accent)); flex-shrink: 0; padding-top: 2px; }
+.bullet-sym svg { width: 16px; height: 16px; }
 .entry-body { flex: 1; min-width: 0; }
 .entry-text { font-family: var(--font-body); font-size: 17px; line-height: 1.65; color: var(--text); word-break: break-word; white-space: pre-wrap; }
 
@@ -249,17 +250,18 @@ main { flex: 1; overflow-y: auto; padding: 16px 16px 0; }
   padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0));
 }
 
-.type-selector { display: flex; gap: 6px; margin-bottom: 8px; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
+.type-selector { display: flex; gap: 6px; margin-bottom: 8px; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; justify-content: flex-start; }
 .type-selector::-webkit-scrollbar { display: none; }
 
 .type-btn {
   background: var(--glass); border: 1px solid var(--glass-border); border-radius: 30px;
   color: var(--text-muted); cursor: pointer; padding: 7px 16px;
-  font-size: 15px; font-family: var(--font-body); font-weight: 600;
+  font-size: 16px; font-family: var(--font-body); font-weight: 600;
   display: flex; align-items: center; gap: 6px; transition: all 0.15s;
   white-space: nowrap; flex-shrink: 0; box-shadow: 0 1px 3px var(--shadow);
   -webkit-tap-highlight-color: transparent;
 }
+.type-btn svg { flex-shrink: 0; }
 .type-btn:hover { color: var(--accent2); }
 .type-btn.active       { background: var(--accent);  border-color: var(--accent);  color: #fff; box-shadow: 0 2px 8px rgba(84,122,149,0.40); }
 .type-btn.active.task  { background: #4A8C6A; border-color: #4A8C6A; box-shadow: 0 2px 8px rgba(74,140,106,0.35); }

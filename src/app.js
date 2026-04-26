@@ -5,7 +5,12 @@ const STORAGE_KEY = 'noted_entries';
 const THEME_KEY   = 'noted_theme';
 const PRIVACY_KEY = 'noted_privacy';
 const SORT_KEY    = 'noted_sort';
-const SYMBOLS     = { note: '·', task: '○', event: '◇', idea: '★' };
+const SYMBOLS = {
+  note:  '<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><circle cx="12" cy="12" r="5"/></svg>',
+  task:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>',
+  event: '<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 2.25l2.47 7.61h8l-6.47 4.7 2.47 7.61L12 17.47l-6.47 4.7 2.47-7.61-6.47-4.7h8z"/></svg>',
+  idea:  '<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 2a7 7 0 00-4 12.74V17a1 1 0 001 1h6a1 1 0 001-1v-2.26A7 7 0 0012 2zm-1 17h2v1a1 1 0 01-2 0v-1z"/></svg>',
+};
 
 // ── State ────────────────────────────────────────────────────────────────────
 let selectedType = 'note';
