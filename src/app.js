@@ -27,6 +27,14 @@ function updateThemeIcon() {
   document.getElementById('icon-auto').style.display = !saved            ? 'block' : 'none';
   document.getElementById('icon-sun').style.display  = saved === 'light' ? 'block' : 'none';
   document.getElementById('icon-moon').style.display = saved === 'dark'  ? 'block' : 'none';
+  const dAuto = document.getElementById('d-icon-auto');
+  if (dAuto) {
+    dAuto.style.display = !saved ? 'block' : 'none';
+    document.getElementById('d-icon-sun').style.display  = saved === 'light' ? 'block' : 'none';
+    document.getElementById('d-icon-moon').style.display = saved === 'dark'  ? 'block' : 'none';
+    const lbl = document.getElementById('drawer-theme-label');
+    if (lbl) lbl.textContent = !saved ? 'Auto' : saved === 'light' ? 'Light' : 'Dark';
+  }
 }
 
 function resolveTheme() {
@@ -57,6 +65,13 @@ let blurredIds   = new Set();
 function applyPrivacyUI() {
   document.getElementById('icon-eye').style.display       = privacyOn ? 'none'  : 'block';
   document.getElementById('icon-eye-slash').style.display = privacyOn ? 'block' : 'none';
+  const dEye = document.getElementById('d-icon-eye');
+  if (dEye) {
+    dEye.style.display = privacyOn ? 'none' : 'block';
+    document.getElementById('d-icon-eye-slash').style.display = privacyOn ? 'block' : 'none';
+    const btn = document.getElementById('drawer-privacy-btn');
+    if (btn) btn.classList.toggle('active', privacyOn);
+  }
 }
 
 function scheduleBlur(id) {
@@ -89,6 +104,15 @@ applyPrivacyUI();
 function applySortUI() {
   document.getElementById('icon-sort-new').style.display = sortAsc ? 'none'  : 'block';
   document.getElementById('icon-sort-old').style.display = sortAsc ? 'block' : 'none';
+  const dSortNew = document.getElementById('d-icon-sort-new');
+  if (dSortNew) {
+    dSortNew.style.display = sortAsc ? 'none' : 'block';
+    document.getElementById('d-icon-sort-old').style.display = sortAsc ? 'block' : 'none';
+    const btn = document.getElementById('drawer-sort-btn');
+    if (btn) btn.classList.toggle('active', sortAsc);
+    const lbl = document.getElementById('drawer-sort-label');
+    if (lbl) lbl.textContent = sortAsc ? 'Oldest first' : 'Newest first';
+  }
 }
 
 document.getElementById('sort-btn').addEventListener('click', () => {
@@ -503,6 +527,34 @@ if (!SpeechRecognition) {
   micBtn.addEventListener('click', () => {
     if (isListening) stopListening();
     else startListening();
+  });
+}
+
+// ── Mobile drawer ─────────────────────────────────────────────────────────────
+const drawerOverlay = document.getElementById('drawer-overlay');
+const hamburgerBtn  = document.getElementById('hamburger-btn');
+
+if (hamburgerBtn && drawerOverlay) {
+  hamburgerBtn.addEventListener('click', () => drawerOverlay.classList.add('open'));
+  drawerOverlay.addEventListener('click', e => {
+    if (e.target === drawerOverlay) drawerOverlay.classList.remove('open');
+  });
+  document.getElementById('drawer-theme-btn').addEventListener('click', () => {
+    document.getElementById('theme-btn').click();
+  });
+  document.getElementById('drawer-privacy-btn').addEventListener('click', () => {
+    document.getElementById('privacy-btn').click();
+  });
+  document.getElementById('drawer-sort-btn').addEventListener('click', () => {
+    document.getElementById('sort-btn').click();
+  });
+  document.getElementById('drawer-export-btn').addEventListener('click', () => {
+    drawerOverlay.classList.remove('open');
+    document.getElementById('export-btn').click();
+  });
+  document.getElementById('drawer-clear-btn').addEventListener('click', () => {
+    drawerOverlay.classList.remove('open');
+    document.getElementById('clear-btn').click();
   });
 }
 
