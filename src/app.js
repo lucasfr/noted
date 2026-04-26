@@ -50,6 +50,7 @@ resolveTheme();
 // ── Privacy mode ─────────────────────────────────────────────────────────────
 const BLUR_DELAY = 15000; // ms before entry text blurs after being saved
 let blurTimers   = {};
+let blurredIds   = new Set(); // entries whose text is currently blurred
 
 function applyPrivacyUI() {
   document.getElementById('icon-eye').style.display       = privacyOn ? 'none'  : 'block';
@@ -63,6 +64,7 @@ function scheduleBlur(id) {
   blurTimers[id] = setTimeout(() => {
     const el = document.querySelector(`.entry[data-id="${id}"]`);
     if (el) el.querySelectorAll('.entry-text, .tag').forEach(n => n.classList.add('blurring'));
+    blurredIds.add(id);
   }, BLUR_DELAY);
 }
 
@@ -71,12 +73,11 @@ document.getElementById('privacy-btn').addEventListener('click', () => {
   localStorage.setItem(PRIVACY_KEY, privacyOn);
   applyPrivacyUI();
   if (privacyOn) {
-    // Schedule blur for all currently visible entries
     entries.forEach(e => scheduleBlur(e.id));
   } else {
-    // Cancel timers and unblur everything
     Object.values(blurTimers).forEach(clearTimeout);
     blurTimers = {};
+    blurredIds.clear();
     document.querySelectorAll('.entry-text.blurring, .tag.blurring').forEach(n => n.classList.remove('blurring'));
   }
 });
@@ -175,6 +176,12 @@ function render() {
   container.querySelectorAll('.entry-delete').forEach(btn => {
     btn.addEventListener('click', () => deleteEntry(btn.dataset.id));
   });
+
+  // Re-apply blur to entries that were already blurred before this render
+  blurredIds.forEach(id => {
+    const el = document.querySelector(`.entry[data-id="${id}"]`);
+    if (el) el.querySelectorAll('.entry-text, .tag').forEach(n => n.classList.add('blurring'));
+  });
 }
 
 // ── Actions ──────────────────────────────────────────────────────────────────
@@ -197,6 +204,9 @@ function addEntry(text) {
 
 function deleteEntry(id) {
   entries = entries.filter(e => e.id !== id);
+  blurredIds.delete(id);
+  clearTimeout(blurTimers[id]);
+  delete blurTimers[id];
   save();
   render();
 }
@@ -324,6 +334,7 @@ render();
 // If privacy was on from a previous session, blur all entries immediately on load
 if (privacyOn) {
   entries.forEach(e => {
+    blurredIds.add(e.id);
     const el = document.querySelector(`.entry[data-id="${e.id}"]`);
     if (el) el.querySelectorAll('.entry-text, .tag').forEach(n => n.classList.add('blurring'));
   });
