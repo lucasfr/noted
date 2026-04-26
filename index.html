@@ -6,19 +6,22 @@
   <meta name="theme-color" content="#E8EDF2">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Noted">
-  <title>Noted</title>
+  <meta name="apple-mobile-web-app-title" content="Noted!">
+  <title>Noted!</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 </head>
 <body>
 
+  <!-- ── Header ── -->
   <header>
     <div class="header-left">
       <span class="logo" id="logo-btn" title="About Noted!">Noted<span>!</span></span>
       <span class="date-display" id="header-date"></span>
     </div>
     <div class="header-actions">
-      <!-- toggles -->
       <div class="btn-group">
         <button class="icon-btn" id="theme-btn" title="Cycle theme: auto / light / dark">
           <svg id="icon-auto" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -49,7 +52,6 @@
           </svg>
         </button>
       </div>
-      <!-- actions -->
       <div class="btn-group">
         <button class="icon-btn" id="export-btn" title="Export JSON">
           <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -65,8 +67,10 @@
     </div>
   </header>
 
+  <!-- ── Entries ── -->
   <main id="entries-container"></main>
 
+  <!-- ── Input area ── -->
   <div class="input-area">
     <div class="type-selector" id="type-selector">
       <button class="type-btn active note" data-type="note">· note</button>
@@ -93,7 +97,7 @@
     </div>
   </div>
 
-  <!-- Export modal -->
+  <!-- ── Export modal ── -->
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal">
       <div class="modal-handle"></div>
@@ -107,7 +111,7 @@
     </div>
   </div>
 
-  <!-- About modal -->
+  <!-- ── About modal ── -->
   <div class="about-overlay" id="about-overlay">
     <div class="about-card">
       <button class="about-close" id="about-close" aria-label="Close">
@@ -115,50 +119,33 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
         </svg>
       </button>
-
       <div class="about-logo">Noted<span>!</span></div>
       <p class="about-version">Version 1.0</p>
-
       <p class="about-desc">A minimal bullet journal for capturing thoughts, tasks, events and ideas — everything timestamped automatically.</p>
-
       <div class="about-types">
         <div class="about-type">
           <span class="about-type-sym" style="color:#547A95">·</span>
-          <div>
-            <strong>Note</strong>
-            <span>A thought, observation or piece of information.</span>
-          </div>
+          <div><strong>Note</strong><span>A thought, observation or piece of information.</span></div>
         </div>
         <div class="about-type">
           <span class="about-type-sym" style="color:#4A8C6A">○</span>
-          <div>
-            <strong>Task</strong>
-            <span>Something to do or follow up on.</span>
-          </div>
+          <div><strong>Task</strong><span>Something to do or follow up on.</span></div>
         </div>
         <div class="about-type">
           <span class="about-type-sym" style="color:#7B6CA8">◇</span>
-          <div>
-            <strong>Event</strong>
-            <span>Something that happened or is happening.</span>
-          </div>
+          <div><strong>Event</strong><span>Something that happened or is happening.</span></div>
         </div>
         <div class="about-type">
           <span class="about-type-sym" style="color:#C2A56D">★</span>
-          <div>
-            <strong>Idea</strong>
-            <span>A spark worth keeping hold of.</span>
-          </div>
+          <div><strong>Idea</strong><span>A spark worth keeping hold of.</span></div>
         </div>
       </div>
-
       <div class="about-features">
         <span>#hashtags</span> for tagging ·
         <span>Export</span> to JSON for Claude →&thinsp;Obsidian ·
         <span>Privacy mode</span> with auto-blur
       </div>
-
-      <p class="about-credit">Made with ❤️ · <a href="https://lfranca.uk" target="_blank" rel="noopener">lfranca.uk</a></p>
+      <p class="about-credit">Made with ❤️<br><a href="https://lfranca.uk" target="_blank" rel="noopener">lfranca.uk</a></p>
     </div>
   </div>
 
