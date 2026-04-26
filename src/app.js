@@ -283,29 +283,88 @@ function render() {
         ? `<div class="entry-tags">${tags.map(t => `<span class="tag">#${t}</span>`).join('')}</div>`
         : '';
       return `
-        <div class="entry" data-type="${e.type}" data-id="${e.id}">
-          <span class="entry-time">${fmtTime(e.timestamp)}</span>
-          <span class="bullet-sym">${SYMBOLS[e.type]}</span>
-          <div class="entry-body">
-            <div class="entry-text" title="Click to edit">${esc(e.text)}</div>
-            ${tagsHtml}
+        <div class="entry-swipe-wrap" data-id="${e.id}">
+          <div class="entry-actions">
+            <button class="entry-action-edit" data-id="${e.id}">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>
+              <span>Edit</span>
+            </button>
+            <button class="entry-action-delete" data-id="${e.id}">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+              <span>Delete</span>
+            </button>
           </div>
-          <button class="entry-delete" data-id="${e.id}" title="Delete">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
+          <div class="entry" data-type="${e.type}" data-id="${e.id}">
+            <span class="entry-time">${fmtTime(e.timestamp)}</span>
+            <span class="bullet-sym">${SYMBOLS[e.type]}</span>
+            <div class="entry-body">
+              <div class="entry-text">${esc(e.text)}</div>
+              ${tagsHtml}
+            </div>
+          </div>
         </div>`;
     }).join('');
 
     return `<div class="day-group"><div class="day-label">${fmtDay(day[0].timestamp)}</div>${rows}</div>`;
   }).join('');
 
-  container.querySelectorAll('.entry-text').forEach(el => {
-    el.addEventListener('click', () => startEdit(el.closest('.entry').dataset.id));
+  container.querySelectorAll('.entry-swipe-wrap').forEach(wrap => {
+    const entry   = wrap.querySelector('.entry');
+    const actionsW = 140;
+    let startX = 0, startY = 0, dx = 0, swiping = false, revealed = false;
+
+    function reveal()  { entry.style.transform = `translateX(-${actionsW}px)`; revealed = true; }
+    function collapse(){ entry.style.transform = 'translateX(0)';               revealed = false; }
+
+    entry.addEventListener('pointerdown', e => {
+      startX = e.clientX; startY = e.clientY; dx = 0; swiping = false;
+      entry.style.transition = 'none';
+    });
+    entry.addEventListener('pointermove', e => {
+      const dX = e.clientX - startX;
+      const dY = e.clientY - startY;
+      if (!swiping && Math.abs(dX) < 5 && Math.abs(dY) < 5) return;
+      if (!swiping) {
+        if (Math.abs(dX) < Math.abs(dY)) return;
+        swiping = true;
+      }
+      dx = dX;
+      const base = revealed ? -actionsW : 0;
+      entry.style.transform = `translateX(${Math.max(-actionsW, Math.min(0, base + dx))}px)`;
+    });
+    entry.addEventListener('pointerup', e => {
+      entry.style.transition = '';
+      if (!swiping) {
+        if (revealed) { collapse(); return; }
+        const textEl = e.target.closest('.entry-text');
+        if (textEl) startEdit(wrap.dataset.id);
+        return;
+      }
+      dx < -40 ? reveal() : collapse();
+    });
+    entry.addEventListener('pointercancel', () => {
+      entry.style.transition = '';
+      revealed ? reveal() : collapse();
+    });
   });
 
-  container.querySelectorAll('.entry-delete').forEach(btn => {
+  document.addEventListener('pointerdown', e => {
+    if (!e.target.closest('.entry-swipe-wrap')) {
+      container.querySelectorAll('.entry').forEach(el => {
+        el.style.transition = '';
+        el.style.transform = 'translateX(0)';
+      });
+    }
+  }, { capture: true });
+
+  container.querySelectorAll('.entry-action-edit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.entry-swipe-wrap').querySelector('.entry').style.transform = 'translateX(0)';
+      startEdit(btn.dataset.id);
+    });
+  });
+
+  container.querySelectorAll('.entry-action-delete').forEach(btn => {
     btn.addEventListener('click', () => deleteEntry(btn.dataset.id));
   });
 
