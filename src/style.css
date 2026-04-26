@@ -77,12 +77,12 @@ main,
 /* ── Header ── */
 header {
   position: sticky; top: 0; z-index: 100;
-  padding: 16px 16px 12px;
+  padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px 12px;
   background: var(--header-bg);
   backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--glass-border);
   display: flex; align-items: center; justify-content: space-between;
-  gap: 8px; overflow: hidden;
+  gap: 8px;
 }
 
 .header-left { display: flex; align-items: baseline; gap: 8px; min-width: 0; flex-shrink: 1; }
