@@ -48,7 +48,7 @@ systemDark.addEventListener('change', () => {
 resolveTheme();
 
 // ── Privacy mode ─────────────────────────────────────────────────────────────
-const BLUR_DELAY = 4000; // ms before a new entry blurs after being saved
+const BLUR_DELAY = 15000; // ms before entry text blurs after being saved
 let blurTimers   = {};
 
 function applyPrivacyUI() {
@@ -63,7 +63,7 @@ function scheduleBlur(id) {
   clearTimeout(blurTimers[id]);
   blurTimers[id] = setTimeout(() => {
     const el = document.querySelector(`.entry[data-id="${id}"]`);
-    if (el) el.querySelectorAll('.entry-text, .entry-time, .bullet-sym, .tag').forEach(n => n.classList.add('blurring'));
+    if (el) el.querySelectorAll('.entry-text, .tag').forEach(n => n.classList.add('blurring'));
   }, BLUR_DELAY);
 }
 
@@ -318,6 +318,6 @@ render();
 if (privacyOn) {
   entries.forEach(e => {
     const el = document.querySelector(`.entry[data-id="${e.id}"]`);
-    if (el) el.querySelectorAll('.entry-text, .entry-time, .bullet-sym, .tag').forEach(n => n.classList.add('blurring'));
+    if (el) el.querySelectorAll('.entry-text, .tag').forEach(n => n.classList.add('blurring'));
   });
 }
