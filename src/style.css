@@ -393,7 +393,7 @@ main { flex: 1; overflow-y: auto; padding: 16px 16px 0; }
 .entry-text { cursor: pointer; }
 .entry-text:hover { opacity: 0.75; }
 
-.entry.editing { background: var(--glass-hover); }
+.entry.editing { background: var(--entry-bg-hover); }
 .entry.editing .entry-text { display: none; }
 .entry.editing .entry-tags { display: none; }
 
