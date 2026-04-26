@@ -52,7 +52,6 @@ const BLUR_DELAY = 15000; // ms before entry text blurs after being saved
 let blurTimers   = {};
 
 function applyPrivacyUI() {
-  document.body.classList.toggle('privacy-on', privacyOn);
   document.getElementById('icon-eye').style.display       = privacyOn ? 'none'  : 'block';
   document.getElementById('icon-eye-slash').style.display = privacyOn ? 'block' : 'none';
   document.getElementById('privacy-btn').classList.toggle('privacy-active', privacyOn);
@@ -71,7 +70,15 @@ document.getElementById('privacy-btn').addEventListener('click', () => {
   privacyOn = !privacyOn;
   localStorage.setItem(PRIVACY_KEY, privacyOn);
   applyPrivacyUI();
-  if (!privacyOn) Object.values(blurTimers).forEach(clearTimeout);
+  if (privacyOn) {
+    // Schedule blur for all currently visible entries
+    entries.forEach(e => scheduleBlur(e.id));
+  } else {
+    // Cancel timers and unblur everything
+    Object.values(blurTimers).forEach(clearTimeout);
+    blurTimers = {};
+    document.querySelectorAll('.entry-text.blurring, .tag.blurring').forEach(n => n.classList.remove('blurring'));
+  }
 });
 
 applyPrivacyUI();
@@ -314,7 +321,7 @@ document.getElementById('header-date').textContent = new Date().toLocaleDateStri
 // ── Init ──────────────────────────────────────────────────────────────────────
 load();
 render();
-// If privacy was on from a previous session, blur all entries immediately
+// If privacy was on from a previous session, blur all entries immediately on load
 if (privacyOn) {
   entries.forEach(e => {
     const el = document.querySelector(`.entry[data-id="${e.id}"]`);
