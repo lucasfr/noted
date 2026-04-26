@@ -21,7 +21,9 @@
       <span class="logo" id="logo-btn" title="About Noted!">Noted<span>!</span></span>
       <span class="date-display" id="header-date"></span>
     </div>
-    <div class="header-actions">
+
+    <!-- Desktop: full button groups -->
+    <div class="header-actions desktop-only">
       <div class="btn-group">
         <button class="icon-btn" id="theme-btn" title="Cycle theme: auto / light / dark">
           <svg id="icon-auto" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -65,7 +67,80 @@
         </button>
       </div>
     </div>
+
+    <!-- Mobile: hamburger button -->
+    <button class="icon-btn mobile-only" id="menu-btn" title="Menu">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+      </svg>
+    </button>
   </header>
+
+  <!-- ── Mobile menu drawer ── -->
+  <div class="drawer-overlay" id="drawer-overlay">
+    <div class="drawer" id="drawer">
+      <div class="drawer-handle"></div>
+      <p class="drawer-section-label">Display</p>
+      <div class="drawer-row">
+        <button class="drawer-btn" id="drawer-theme-btn">
+          <span class="drawer-icon">
+            <svg id="d-icon-auto" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 17H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-4m-6 0l-1 3m8-3l1 3m-9 0h8"/>
+            </svg>
+            <svg id="d-icon-sun" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="display:none">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+            </svg>
+            <svg id="d-icon-moon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="display:none">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>
+            </svg>
+          </span>
+          <span class="drawer-label" id="drawer-theme-label">Theme: Auto</span>
+        </button>
+        <button class="drawer-btn" id="drawer-privacy-btn">
+          <span class="drawer-icon">
+            <svg id="d-icon-eye" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <svg id="d-icon-eye-slash" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="display:none">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>
+            </svg>
+          </span>
+          <span class="drawer-label">Privacy</span>
+        </button>
+        <button class="drawer-btn" id="drawer-sort-btn">
+          <span class="drawer-icon">
+            <svg id="d-icon-sort-new" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9M3 12h5m10 4V8m0 0l-3 3m3-3l3 3"/>
+            </svg>
+            <svg id="d-icon-sort-old" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="display:none">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9M3 12h5m10-8v8m0 0l-3-3m3 3l3-3"/>
+            </svg>
+          </span>
+          <span class="drawer-label" id="drawer-sort-label">Newest first</span>
+        </button>
+      </div>
+      <p class="drawer-section-label">Actions</p>
+      <div class="drawer-row">
+        <button class="drawer-btn" id="drawer-export-btn">
+          <span class="drawer-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+            </svg>
+          </span>
+          <span class="drawer-label">Export</span>
+        </button>
+        <button class="drawer-btn" id="drawer-clear-btn">
+          <span class="drawer-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+            </svg>
+          </span>
+          <span class="drawer-label">Clear today</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- ── Entries ── -->
   <main id="entries-container"></main>
