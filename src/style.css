@@ -203,6 +203,7 @@ main { flex: 1; overflow-y: auto; padding: 16px 16px 0; }
   white-space: nowrap; flex-shrink: 0; box-shadow: 0 1px 3px var(--shadow);
   -webkit-tap-highlight-color: transparent;
 }
+.type-btn:hover { color: var(--accent2); }
 .type-btn.active       { background: var(--accent);  border-color: var(--accent);  color: #fff; box-shadow: 0 2px 8px rgba(84,122,149,0.40); }
 .type-btn.active.task  { background: #4A8C6A; border-color: #4A8C6A; box-shadow: 0 2px 8px rgba(74,140,106,0.35); }
 .type-btn.active.event { background: #7B6CA8; border-color: #7B6CA8; box-shadow: 0 2px 8px rgba(123,108,168,0.35); }
