@@ -433,6 +433,21 @@ document.getElementById('clear-btn').addEventListener('click', () => {
   }
 });
 
+// ── About ─────────────────────────────────────────────────────────────────────
+const aboutOverlay = document.getElementById('about-overlay');
+
+document.getElementById('logo-btn').addEventListener('click', () => {
+  aboutOverlay.classList.add('open');
+});
+
+document.getElementById('about-close').addEventListener('click', () => {
+  aboutOverlay.classList.remove('open');
+});
+
+aboutOverlay.addEventListener('click', e => {
+  if (e.target === aboutOverlay) aboutOverlay.classList.remove('open');
+});
+
 // ── Speech to text ────────────────────────────────────────────────────────────
 const micBtn = document.getElementById('mic-btn');
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -463,7 +478,6 @@ if (!SpeechRecognition) {
     recognition.stop();
   }
 
-  // Show live transcript appended to any pre-existing text
   recognition.addEventListener('result', e => {
     const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
     textarea.value = baseText + (baseText && transcript ? ' ' : '') + transcript;

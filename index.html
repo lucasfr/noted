@@ -14,7 +14,7 @@
 
   <header>
     <div class="header-left">
-      <span class="logo">Noted<span>!</span></span>
+      <span class="logo" id="logo-btn" title="About Noted!">Noted<span>!</span></span>
       <span class="date-display" id="header-date"></span>
     </div>
     <div class="header-actions">
@@ -77,11 +77,9 @@
     <div class="input-row">
       <textarea id="entry-input" placeholder="capture a thought…" rows="1"></textarea>
       <button class="mic-btn" id="mic-btn" aria-label="Voice input" title="Voice input">
-        <!-- mic idle: outline style -->
         <svg id="icon-mic" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/>
         </svg>
-        <!-- mic active: proper solid filled paths -->
         <svg id="icon-mic-active" fill="currentColor" viewBox="0 0 24 24" style="display:none">
           <path d="M8.25 4.5a3.75 3.75 0 117.5 0v8.25a3.75 3.75 0 11-7.5 0V4.5z"/>
           <path d="M6 10.5a.75.75 0 01.75.75v1.5a5.25 5.25 0 1010.5 0v-1.5a.75.75 0 011.5 0v1.5a6.751 6.751 0 01-6 6.709v2.291h3a.75.75 0 010 1.5h-7.5a.75.75 0 010-1.5h3v-2.291a6.751 6.751 0 01-6-6.709v-1.5A.75.75 0 016 10.5z"/>
@@ -95,6 +93,7 @@
     </div>
   </div>
 
+  <!-- Export modal -->
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal">
       <div class="modal-handle"></div>
@@ -105,6 +104,61 @@
         <button class="modal-btn primary" id="modal-copy">Copy</button>
         <button class="modal-btn primary" id="modal-download">Download</button>
       </div>
+    </div>
+  </div>
+
+  <!-- About modal -->
+  <div class="about-overlay" id="about-overlay">
+    <div class="about-card">
+      <button class="about-close" id="about-close" aria-label="Close">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <div class="about-logo">Noted<span>!</span></div>
+      <p class="about-version">Version 1.0</p>
+
+      <p class="about-desc">A minimal bullet journal for capturing thoughts, tasks, events and ideas — everything timestamped automatically.</p>
+
+      <div class="about-types">
+        <div class="about-type">
+          <span class="about-type-sym" style="color:#547A95">·</span>
+          <div>
+            <strong>Note</strong>
+            <span>A thought, observation or piece of information.</span>
+          </div>
+        </div>
+        <div class="about-type">
+          <span class="about-type-sym" style="color:#4A8C6A">○</span>
+          <div>
+            <strong>Task</strong>
+            <span>Something to do or follow up on.</span>
+          </div>
+        </div>
+        <div class="about-type">
+          <span class="about-type-sym" style="color:#7B6CA8">◇</span>
+          <div>
+            <strong>Event</strong>
+            <span>Something that happened or is happening.</span>
+          </div>
+        </div>
+        <div class="about-type">
+          <span class="about-type-sym" style="color:#C2A56D">★</span>
+          <div>
+            <strong>Idea</strong>
+            <span>A spark worth keeping hold of.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-features">
+        <span>#hashtags</span> for tagging ·
+        <span>Export</span> to JSON for Claude →&thinsp;Obsidian ·
+        <span>Privacy mode</span> with auto-blur
+      </div>
+
+      <p class="about-credit">Made with care by Lucas · <a href="https://github.com/lucasfr/noted" target="_blank" rel="noopener">github.com/lucasfr/noted</a></p>
     </div>
   </div>
 
