@@ -1,89 +1,106 @@
-# 🗒️ Noted
+# 🗒️ Noted!
 
-**A minimal, offline-first PWA for capturing timestamped bullet journal entries and exporting them to Obsidian.**
+**A privacy-first, offline PWA bullet journal for capturing timestamped thoughts, tasks, events and ideas.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![HTML](https://img.shields.io/badge/HTML-single--file-E34F26?logo=html5&logoColor=white)](./noted.html)
-[![PWA](https://img.shields.io/badge/PWA-offline--ready-5A0FC8)](./noted.html)
+[![PWA](https://img.shields.io/badge/PWA-offline--ready-5A0FC8)](https://noted.lfranca.uk)
+[![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)](./vite.config.js)
+[![Netlify](https://img.shields.io/badge/Deployed-Netlify-00C7B7?logo=netlify&logoColor=white)](https://noted.lfranca.uk)
 
 ---
 
-## 📖 What is Noted?
+## 📖 What is Noted!
 
-Noted is a single-file progressive web app for bullet journalling on the go. Every entry gets a timestamp automatically. Entries are grouped by day, tagged with `#hashtags`, and typed as notes, tasks, events, or ideas. Everything lives in your browser's local storage — no account, no server, no tracking.
+Noted! is a minimal bullet journal PWA that runs entirely in your browser. Every entry is timestamped automatically, stored only in your device's local storage, and never sent anywhere. No account. No server. No tracking. Your notes stay yours.
 
-When you're ready to move entries into Obsidian, export them as a structured JSON file and paste it into Claude with the prompt: *"Convert this Noted JSON into an Obsidian Daily Note in markdown."*
+When you're ready to move entries into Obsidian or another tool, export them as structured JSON and convert with Claude:
+
+> *"Convert this Noted JSON into an Obsidian Daily Note in markdown."*
 
 ## ✨ Features
 
-- 📝 **Four entry types** — note `·`, task `○`, event `◇`, idea `★` — each colour-coded
+- 🔒 **Privacy-first** — all data stays on-device in localStorage; nothing is transmitted or synced
+- 🔇 **Privacy mode** — blur all entry text with a tap; auto-reveals on hover, auto-hides after 15 seconds
+- 📝 **Four entry types** — note `·`, task `○`, event `◇`, idea `💡` — each colour-coded with a left accent stripe
 - 🕐 **Automatic timestamps** on every entry, grouped by day
-- **#hashtag detection** — tags are extracted and rendered inline
-- 🌙 **Light and dark mode** — follows system preference, toggle in the header
-- 💾 **localStorage persistence** — survives page reloads and browser restarts
-- 📤 **JSON export** — copy to clipboard or download; structured for Claude → Obsidian conversion
+- **#hashtag detection** — tags extracted and rendered as inline pills
+- 👆 **Swipe to edit or delete** — swipe left on any entry to reveal Edit and Delete actions
+- 🌙 **Theme cycling** — Auto / Light / Dark, follows system preference
+- 🎙️ **Voice input** — Web Speech API for hands-free capture
+- 📤 **JSON export** — copy to clipboard or download; structured for Claude → Obsidian
 - 📱 **PWA** — installable on iOS and Android, works fully offline
-- 🎨 **Single HTML file** — no build step, no dependencies, drop it anywhere
+- 🍔 **Mobile-optimised** — hamburger menu with bottom drawer on small screens
 
 ## 🗂️ Project Structure
 
 ```
 noted/
-├── noted.html     # The entire app — HTML, CSS, and JS in one file
-├── README.md
-└── LICENSE
+├── index.html              # App shell with header, drawer, input, modals
+├── src/
+│   ├── app.js              # All application logic
+│   ├── style.css           # Design system and styles
+│   └── partials/           # HTML reference partials (header, input, modals)
+├── public/
+│   ├── favicon.svg
+│   ├── apple-touch-icon.png
+│   ├── icon-192.png
+│   └── icon-512.png
+├── vite.config.js
+├── netlify.toml
+└── package.json
 ```
 
 ## 🚀 Getting Started
 
+### Prerequisites
+
+- Node.js ≥ 18
+
 ### Running locally
 
-Just open `noted.html` in any modern browser:
-
 ```bash
-open noted.html
+git clone https://github.com/lucasfr/noted.git
+cd noted
+npm install
+npm run dev
 ```
 
-Or serve it with any static server:
+Then open `http://localhost:5173` in your browser.
+
+### Building for production
 
 ```bash
-npx serve .
-# then open http://localhost:3000/noted.html
+npm run build   # outputs to dist/
 ```
-
-### Deploying to GitHub Pages
-
-1. Go to **Settings → Pages** in your repository
-2. Set source to **Deploy from a branch → `main` → `/ (root)`**
-3. The app will be live at `https://lucasfr.github.io/noted/noted.html`
 
 ### Installing as a PWA
 
-On iOS: open the URL in Safari → Share → Add to Home Screen  
-On Android: open in Chrome → browser menu → Add to Home Screen
+On **iOS**: open the live URL in Safari → Share → Add to Home Screen  
+On **Android**: open in Chrome → browser menu → Add to Home Screen
 
 ### Exporting to Obsidian
 
-1. Tap the **↓ download** icon in the header
+1. Tap the **download** icon (desktop) or open the **menu** (mobile)
 2. Choose **Copy** or **Download** to get the JSON
-3. Paste into Claude with the prompt:
+3. Paste into Claude with:
 
 ```
 Convert this Noted JSON into an Obsidian Daily Note in markdown
 ```
 
-## 🎨 Customising
+## 🎨 Design System
 
-All design tokens are CSS variables at the top of the `<style>` block in `noted.html`. The palette uses four colours:
+All design tokens are CSS variables in `src/style.css`.
 
 | Variable | Light | Dark | Role |
 |---|---|---|---|
 | `--bg` | `#E8EDF2` | `#1A2330` | Page background |
 | `--text` | `#2C3947` | `#D8E4EC` | Primary text |
-| `--accent` | `#547A95` | `#547A95` | Actions, buttons, note bullets |
-| `--accent2` | `#C2A56D` | `#C2A56D` | Gold accent, day labels, idea bullets |
+| `--accent` | `#547A95` | `#547A95` | Buttons, note bullets |
+| `--accent2` | `#C2A56D` | `#C2A56D` | Gold, day labels, idea bullets |
+| `--entry-bg` | `#FFFFFF` | `#1E2D3D` | Entry card background (opaque) |
 
-To swap the palette, edit the `:root` and `[data-theme="dark"]` blocks.
+The app uses a dot-grid background, glassy frosted-glass UI elements (`backdrop-filter: blur`), and fully opaque entry cards to support the swipe-to-reveal interaction.
 
 ## 👥 Authors
 
