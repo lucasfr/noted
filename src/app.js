@@ -57,7 +57,6 @@ let blurredIds   = new Set();
 function applyPrivacyUI() {
   document.getElementById('icon-eye').style.display       = privacyOn ? 'none'  : 'block';
   document.getElementById('icon-eye-slash').style.display = privacyOn ? 'block' : 'none';
-  document.getElementById('privacy-btn').classList.toggle('privacy-active', privacyOn);
 }
 
 function scheduleBlur(id) {
@@ -90,7 +89,6 @@ applyPrivacyUI();
 function applySortUI() {
   document.getElementById('icon-sort-new').style.display = sortAsc ? 'none'  : 'block';
   document.getElementById('icon-sort-old').style.display = sortAsc ? 'block' : 'none';
-  document.getElementById('sort-btn').classList.toggle('privacy-active', sortAsc);
 }
 
 document.getElementById('sort-btn').addEventListener('click', () => {
