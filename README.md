@@ -13,9 +13,7 @@
 
 Noted! is a minimal bullet journal PWA that runs entirely in your browser. Every entry is timestamped automatically, stored only in your device's local storage, and never sent anywhere. No account. No server. No tracking. Your notes stay yours.
 
-When you're ready to move entries into Obsidian or another tool, export them as structured JSON and convert with Claude:
-
-> *"Convert this Noted JSON into an Obsidian Daily Note in markdown."*
+When you're ready to move entries into Obsidian or another tool, export them as structured JSON
 
 ## ✨ Features
 
@@ -27,7 +25,7 @@ When you're ready to move entries into Obsidian or another tool, export them as 
 - 👆 **Swipe to edit or delete** — swipe left on any entry to reveal Edit and Delete actions
 - 🌙 **Theme cycling** — Auto / Light / Dark, follows system preference
 - 🎙️ **Voice input** — Web Speech API for hands-free capture
-- 📤 **JSON export** — copy to clipboard or download; structured for Claude → Obsidian
+- 📤 **JSON export** — copy to clipboard or download;
 - 📱 **PWA** — installable on iOS and Android, works fully offline
 - 🍔 **Mobile-optimised** — hamburger menu with bottom drawer on small screens
 
