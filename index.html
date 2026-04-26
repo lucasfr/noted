@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#E8EDF2">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Noted">
+  <title>Noted</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <span class="logo">Noted<span>.</span></span>
+      <span class="date-display" id="header-date"></span>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="theme-btn" title="Toggle dark mode">
+        <svg id="icon-sun" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="display:none">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+        </svg>
+        <svg id="icon-moon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>
+        </svg>
+      </button>
+      <button class="icon-btn" id="export-btn" title="Export JSON">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+        </svg>
+      </button>
+      <button class="icon-btn" id="clear-btn" title="Clear today">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="entries-container"></main>
+
+  <div class="input-area">
+    <div class="type-selector" id="type-selector">
+      <button class="type-btn active note" data-type="note">· note</button>
+      <button class="type-btn task" data-type="task">○ task</button>
+      <button class="type-btn event" data-type="event">◇ event</button>
+      <button class="type-btn idea" data-type="idea">★ idea</button>
+    </div>
+    <div class="input-row">
+      <textarea id="entry-input" placeholder="capture a thought…" rows="1"></textarea>
+      <button class="submit-btn" id="submit-btn" aria-label="Add entry">
+        <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <h2>Export entries</h2>
+      <div class="export-preview" id="export-preview"></div>
+      <div class="modal-actions">
+        <button class="modal-btn" id="modal-close">Cancel</button>
+        <button class="modal-btn primary" id="modal-copy">Copy</button>
+        <button class="modal-btn primary" id="modal-download">Download</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="/src/app.js"></script>
+</body>
+</html>
