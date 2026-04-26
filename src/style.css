@@ -108,7 +108,7 @@ header {
   transition: all 0.15s; box-shadow: 0 1px 4px var(--shadow);
   -webkit-tap-highlight-color: transparent;
 }
-.icon-btn:hover { background: var(--glass-hover); }
+.icon-btn:hover { background: var(--glass-hover); color: var(--accent2); }
 
 .btn-group .icon-btn {
   box-shadow: none;
@@ -116,7 +116,7 @@ header {
   background: transparent;
   border-radius: 8px;
 }
-.btn-group .icon-btn:hover { background: var(--glass-hover); }
+.btn-group .icon-btn:hover { background: var(--glass-hover); color: var(--accent2); }
 .icon-btn svg { width: 22px; height: 22px; }
 
 /* ── Entries ── */
