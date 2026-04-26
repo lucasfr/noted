@@ -12,7 +12,7 @@ let selectedType = 'note';
 let entries      = [];
 let privacyOn    = localStorage.getItem(PRIVACY_KEY) === 'true';
 let sortAsc      = localStorage.getItem(SORT_KEY) === 'true';
-let editingId    = null; // id of entry currently being edited
+let editingId    = null;
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -140,7 +140,7 @@ function esc(s) {
 
 // ── Inline editing ────────────────────────────────────────────────────────────
 function startEdit(id) {
-  if (editingId) commitEdit(editingId); // save any open edit first
+  if (editingId) commitEdit(editingId);
   editingId = id;
 
   const entry = entries.find(e => e.id === id);
@@ -151,7 +151,6 @@ function startEdit(id) {
 
   el.classList.add('editing');
 
-  // Replace entry-body with an edit zone
   const body = el.querySelector('.entry-body');
   body.innerHTML = `
     <textarea class="entry-edit-input" rows="1">${entry.text}</textarea>
@@ -165,10 +164,8 @@ function startEdit(id) {
       <button class="entry-edit-cancel">Cancel</button>
     </div>`;
 
-  // Track the type being edited
   el.dataset.editType = entry.type;
 
-  // Auto-resize textarea
   const ta = body.querySelector('.entry-edit-input');
   ta.style.height = 'auto';
   ta.style.height = Math.min(ta.scrollHeight, 200) + 'px';
@@ -179,13 +176,11 @@ function startEdit(id) {
   ta.focus();
   ta.setSelectionRange(ta.value.length, ta.value.length);
 
-  // Keyboard shortcuts
   ta.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); commitEdit(id); }
     if (e.key === 'Escape') { cancelEdit(id); }
   });
 
-  // Type pills
   body.querySelectorAll('.entry-type-pill').forEach(pill => {
     pill.addEventListener('click', () => {
       body.querySelectorAll('.entry-type-pill').forEach(p => p.classList.remove('active'));
@@ -194,7 +189,6 @@ function startEdit(id) {
     });
   });
 
-  // Save / cancel buttons
   body.querySelector('.entry-edit-save').addEventListener('click', () => commitEdit(id));
   body.querySelector('.entry-edit-cancel').addEventListener('click', () => cancelEdit(id));
 }
@@ -282,25 +276,19 @@ function render() {
     return `<div class="day-group"><div class="day-label">${fmtDay(day[0].timestamp)}</div>${rows}</div>`;
   }).join('');
 
-  // Click on entry-text to edit
   container.querySelectorAll('.entry-text').forEach(el => {
-    el.addEventListener('click', () => {
-      const entryEl = el.closest('.entry');
-      startEdit(entryEl.dataset.id);
-    });
+    el.addEventListener('click', () => startEdit(el.closest('.entry').dataset.id));
   });
 
   container.querySelectorAll('.entry-delete').forEach(btn => {
     btn.addEventListener('click', () => deleteEntry(btn.dataset.id));
   });
 
-  // Re-apply blur
   blurredIds.forEach(id => {
     const el = document.querySelector(`.entry[data-id="${id}"]`);
     if (el) el.querySelectorAll('.entry-text, .tag').forEach(n => n.classList.add('blurring'));
   });
 
-  // Restore edit state if a render happened mid-edit
   if (editingId) startEdit(editingId);
 }
 
@@ -444,6 +432,65 @@ document.getElementById('clear-btn').addEventListener('click', () => {
     showToast('Today cleared');
   }
 });
+
+// ── Speech to text ────────────────────────────────────────────────────────────
+const micBtn = document.getElementById('mic-btn');
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (!SpeechRecognition) {
+  micBtn.style.display = 'none';
+} else {
+  const recognition      = new SpeechRecognition();
+  recognition.continuous     = false;
+  recognition.interimResults = true;
+  recognition.lang           = 'en-GB';
+
+  let isListening = false;
+  let baseText    = '';
+
+  function startListening() {
+    if (isListening) return;
+    isListening = true;
+    baseText    = textarea.value;
+    micBtn.classList.add('mic-active');
+    document.getElementById('icon-mic').style.display        = 'none';
+    document.getElementById('icon-mic-active').style.display = 'block';
+    recognition.start();
+  }
+
+  function stopListening() {
+    if (!isListening) return;
+    recognition.stop();
+  }
+
+  // Show live transcript appended to any pre-existing text
+  recognition.addEventListener('result', e => {
+    const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+    textarea.value = baseText + (baseText && transcript ? ' ' : '') + transcript;
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+  });
+
+  recognition.addEventListener('end', () => {
+    isListening = false;
+    micBtn.classList.remove('mic-active');
+    document.getElementById('icon-mic').style.display        = 'block';
+    document.getElementById('icon-mic-active').style.display = 'none';
+  });
+
+  recognition.addEventListener('error', e => {
+    isListening = false;
+    micBtn.classList.remove('mic-active');
+    document.getElementById('icon-mic').style.display        = 'block';
+    document.getElementById('icon-mic-active').style.display = 'none';
+    if (e.error !== 'aborted') showToast('Mic error: ' + e.error);
+  });
+
+  micBtn.addEventListener('click', () => {
+    if (isListening) stopListening();
+    else startListening();
+  });
+}
 
 // ── Header date ───────────────────────────────────────────────────────────────
 document.getElementById('header-date').textContent = new Date().toLocaleDateString('en-GB', {
