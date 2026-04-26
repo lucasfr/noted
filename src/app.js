@@ -4,12 +4,14 @@ import './style.css';
 const STORAGE_KEY = 'noted_entries';
 const THEME_KEY   = 'noted_theme';
 const PRIVACY_KEY = 'noted_privacy';
+const SORT_KEY    = 'noted_sort';
 const SYMBOLS     = { note: '·', task: '○', event: '◇', idea: '★' };
 
 // ── State ────────────────────────────────────────────────────────────────────
 let selectedType = 'note';
 let entries      = [];
 let privacyOn    = localStorage.getItem(PRIVACY_KEY) === 'true';
+let sortAsc      = localStorage.getItem(SORT_KEY) === 'true'; // false = newest first (default)
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -48,9 +50,9 @@ systemDark.addEventListener('change', () => {
 resolveTheme();
 
 // ── Privacy mode ─────────────────────────────────────────────────────────────
-const BLUR_DELAY = 15000; // ms before entry text blurs after being saved
+const BLUR_DELAY = 15000;
 let blurTimers   = {};
-let blurredIds   = new Set(); // entries whose text is currently blurred
+let blurredIds   = new Set();
 
 function applyPrivacyUI() {
   document.getElementById('icon-eye').style.display       = privacyOn ? 'none'  : 'block';
@@ -83,6 +85,22 @@ document.getElementById('privacy-btn').addEventListener('click', () => {
 });
 
 applyPrivacyUI();
+
+// ── Sort order ────────────────────────────────────────────────────────────────
+function applySortUI() {
+  document.getElementById('icon-sort-new').style.display = sortAsc ? 'none'  : 'block';
+  document.getElementById('icon-sort-old').style.display = sortAsc ? 'block' : 'none';
+  document.getElementById('sort-btn').classList.toggle('privacy-active', sortAsc);
+}
+
+document.getElementById('sort-btn').addEventListener('click', () => {
+  sortAsc = !sortAsc;
+  localStorage.setItem(SORT_KEY, sortAsc);
+  applySortUI();
+  render();
+});
+
+applySortUI();
 
 // ── Storage ──────────────────────────────────────────────────────────────────
 function load() {
@@ -142,14 +160,21 @@ function render() {
     return;
   }
 
+  // Group entries by day
   const groups = {};
-  [...entries].reverse().forEach(e => {
+  entries.forEach(e => {
     const k = dayKey(e.timestamp);
     if (!groups[k]) groups[k] = [];
     groups[k].push(e);
   });
 
-  container.innerHTML = Object.entries(groups).map(([, day]) => {
+  // Sort day groups and entries within each group according to sortAsc
+  const sortedGroups = Object.entries(groups)
+    .sort(([a], [b]) => sortAsc ? a.localeCompare(b) : b.localeCompare(a));
+
+  container.innerHTML = sortedGroups.map(([, day]) => {
+    day.sort((a, b) => sortAsc ? a.timestamp - b.timestamp : b.timestamp - a.timestamp);
+
     const rows = day.map(e => {
       const tags     = getTags(e.text);
       const tagsHtml = tags.length
@@ -170,6 +195,7 @@ function render() {
           </button>
         </div>`;
     }).join('');
+
     return `<div class="day-group"><div class="day-label">${fmtDay(day[0].timestamp)}</div>${rows}</div>`;
   }).join('');
 
@@ -198,7 +224,9 @@ function addEntry(text) {
 
   save();
   render();
-  document.querySelector('main').scrollTop = 0;
+  // Scroll to bottom when oldest-first, top when newest-first
+  const main = document.querySelector('main');
+  main.scrollTop = sortAsc ? main.scrollHeight : 0;
   if (privacyOn) scheduleBlur(entries[entries.length - 1].id);
 }
 
@@ -331,7 +359,6 @@ document.getElementById('header-date').textContent = new Date().toLocaleDateStri
 // ── Init ──────────────────────────────────────────────────────────────────────
 load();
 render();
-// If privacy was on from a previous session, blur all entries immediately on load
 if (privacyOn) {
   entries.forEach(e => {
     blurredIds.add(e.id);
