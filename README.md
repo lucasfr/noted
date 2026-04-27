@@ -27,7 +27,8 @@ When you're ready to move entries into your permanent notes app, export them as 
 - 👆 **Swipe to edit or delete** — swipe left on any entry to reveal Edit and Delete actions
 - 🌙 **Theme cycling** — Auto / Light / Dark, follows system preference
 - 🎙️ **Voice input** — Web Speech API for hands-free capture
-- ✅ **Task completion** — tap ○/✓ to mark tasks done with strikethrough; swipe right to complete
+- ✅ **Task completion** — tap ○/✓ to mark tasks done with strikethrough; completion time recorded and displayed
+- 🏝️ **Floating input island** — collapses to a compact pill when inactive on both mobile and desktop
 - 🔍 **Search** — filter entries by text or #tag (⌘F); shows a “No results” state when empty
 - 📤 **JSON + Markdown export** — copy or download as JSON, or copy as Markdown
 - 📥 **JSON import** — restore entries from a backup file; duplicates are skipped automatically
@@ -42,14 +43,22 @@ When you're ready to move entries into your permanent notes app, export them as 
 noted/
 ├── index.html              # App shell with header, drawer, input, modals
 ├── src/
-│   ├── app.js              # All application logic
+│   ├── app.js              # Core application logic and state
+│   ├── render.js           # Entry rendering and DOM updates
+│   ├── storage.js          # localStorage persistence
 │   ├── style.css           # Design system and styles
-│   └── partials/           # HTML reference partials (header, input, modals)
+│   └── ui/
+│       ├── modals.js       # Export, import and about modals
+│       ├── onboarding.js   # First-launch guided walkthrough
+│       ├── speech.js       # Voice input (Web Speech API)
+│       └── swipe.js        # Swipe-to-reveal gesture handler
 ├── public/
 │   ├── favicon.svg
 │   ├── apple-touch-icon.png
 │   ├── icon-192.png
-│   └── icon-512.png
+│   ├── icon-512.png
+│   ├── manifest.json
+│   └── sw.js               # Service worker (offline support)
 ├── vite.config.js
 ├── netlify.toml
 └── package.json
@@ -101,7 +110,14 @@ All design tokens are CSS variables in `src/style.css`.
 | `--accent2` | `#C2A56D` | `#C2A56D` | Gold, day labels |
 | `--entry-bg` | `#FFFFFF` | `#1E2D3D` | Entry card background (opaque) |
 
-Entry type colours: ♣ note `#C0706A` · ♠ task `#4A8C6A` · ♥ event `#7B6CA8` · ♦ idea `#C2A56D`
+Entry type colours (light / dark):
+
+| Type | Light | Dark |
+|---|---|---|
+| ♣ Note | `#2C3E50` | `#7EB8D4` |
+| ♠ Task | `#2C3E50` | `#7EB8D4` |
+| ♥ Event | `#922B21` | `#E8756A` |
+| ♦ Idea | `#922B21` | `#E8756A` |
 
 The app uses a dot-grid background, glassy frosted-glass UI elements (`backdrop-filter: blur`), and fully opaque entry cards to support the swipe-to-reveal interaction.
 
