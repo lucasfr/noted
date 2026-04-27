@@ -587,6 +587,7 @@ document.getElementById('clear-btn').addEventListener('click', () => {
 // ── Search ───────────────────────────────────────────────────────────────────────────
 const searchBar   = document.getElementById('search-bar');
 const searchInput = document.getElementById('search-input');
+const drawerOverlay = document.getElementById('drawer-overlay');
 
 function openSearch() {
   searchBar.style.display = 'flex';
@@ -730,7 +731,6 @@ if (!SpeechRecognition) {
 }
 
 // ── Mobile drawer ─────────────────────────────────────────────────────────────
-const drawerOverlay = document.getElementById('drawer-overlay');
 const hamburgerBtn  = document.getElementById('hamburger-btn');
 
 if (hamburgerBtn && drawerOverlay) {
