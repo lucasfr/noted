@@ -327,9 +327,11 @@ function render() {
               <span>Delete</span>
             </button>
           </div>
-          <div class="entry" data-type="${e.type}" data-id="${e.id}">
+          <div class="entry" data-type="${e.type}" data-id="${e.id}" ${e.done ? 'data-done="true"' : ''}>
             <span class="entry-time">${fmtTime(e.timestamp)}</span>
-            <span class="bullet-sym">${SYMBOLS[e.type]}</span>
+            ${e.type === 'task' ? `<button class="task-checkbox ${e.done ? 'checked' : ''}" data-id="${e.id}" aria-label="Toggle done">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l3.5 3.5L13 4.5"/></svg>
+            </button>` : `<span class="bullet-sym">${SYMBOLS[e.type]}</span>`}
             <div class="entry-body">
               <div class="entry-text">${esc(e.text)}</div>
               ${tagsHtml}
@@ -363,10 +365,7 @@ function render() {
       }
       dx = dX;
       const base = revealed ? -actionsW : 0;
-      // Allow right swipe up to 60px for tasks only
-      const isTask = entry.dataset.type === 'task';
-      const maxRight = isTask ? 60 : 0;
-      entry.style.transform = `translateX(${Math.max(-actionsW, Math.min(maxRight, base + dx))}px)`;
+      entry.style.transform = `translateX(${Math.max(-actionsW, Math.min(0, base + dx))}px)`;
     });
     entry.addEventListener('pointerup', e => {
       entry.style.transition = '';
@@ -376,12 +375,7 @@ function render() {
         if (textEl) startEdit(wrap.dataset.id);
         return;
       }
-      // Swipe right on task → toggle done
-      if (dx > 40 && entry.dataset.type === 'task') {
-        collapse();
-        toggleDone(wrap.dataset.id);
-        return;
-      }
+      // No right-swipe task toggle — using checkbox instead
       dx < -40 ? reveal() : collapse();
     });
     entry.addEventListener('pointercancel', () => {
@@ -407,6 +401,13 @@ function render() {
     btn.addEventListener('click', () => {
       btn.closest('.entry-swipe-wrap').querySelector('.entry').style.transform = 'translateX(0)';
       startEdit(btn.dataset.id);
+    });
+  });
+
+  container.querySelectorAll('.task-checkbox').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      toggleDone(btn.dataset.id);
     });
   });
 
@@ -440,6 +441,15 @@ function addEntry(text) {
   const main = document.scrollingElement || document.documentElement;
   main.scrollTop = sortAsc ? main.scrollHeight : 0;
   if (privacyOn) scheduleBlur(entries[entries.length - 1].id);
+}
+
+function toggleDone(id) {
+  const idx = entries.findIndex(e => e.id === id);
+  if (idx === -1) return;
+  entries[idx].done = !entries[idx].done;
+  if (navigator.vibrate) navigator.vibrate(6);
+  save();
+  render();
 }
 
 function deleteEntry(id) {

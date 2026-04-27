@@ -538,13 +538,25 @@ main { flex: 1; padding: 16px 16px 0; }
 .entry.done .entry-text { text-decoration: line-through; opacity: 0.5; }
 .entry.done .bullet-sym { opacity: 0.4; }
 
-.task-done-btn {
-  background: none; border: none; cursor: pointer; padding: 0 6px 0 0;
-  font-size: 18px; line-height: 1; color: var(--bullet-color, var(--accent));
-  flex-shrink: 0; transition: opacity 0.15s;
+.task-checkbox {
+  width: 22px; height: 22px; flex-shrink: 0;
+  border-radius: 6px;
+  border: 2px solid var(--bullet-color, var(--accent));
+  background: transparent;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+  padding: 0;
+  margin-top: 2px;
   -webkit-tap-highlight-color: transparent;
 }
-.task-done-btn:hover { opacity: 0.7; }
+.task-checkbox svg { width: 14px; height: 14px; opacity: 0; transition: opacity 0.15s; stroke: #fff; }
+.task-checkbox.checked { background: var(--bullet-color, var(--accent)); border-color: var(--bullet-color, var(--accent)); }
+.task-checkbox.checked svg { opacity: 1; }
+.task-checkbox:hover { opacity: 0.75; }
+
+.entry[data-done="true"] .entry-text { text-decoration: line-through; opacity: 0.45; }
+.entry[data-done="true"] .entry-time { opacity: 0.45; }
 .entry-text:hover { opacity: 0.75; }
 
 .entry.editing { background: var(--entry-bg-hover); }
