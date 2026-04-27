@@ -54,24 +54,31 @@
   --tag-border:   rgba(84,122,149,0.32);
 }
 
-/* ── Background dot grid ── */
-html, body {
+/* ── Background dot grid — fixed so it covers the full viewport on iOS ── */
+html {
   height: 100%;
   background-color: var(--bg);
   background-image: radial-gradient(circle, rgba(84,122,149,0.25) 1px, transparent 1px);
   background-size: 20px 20px;
+  background-attachment: fixed;
+  transition: background-color 0.25s;
+}
+
+[data-theme="dark"] html {
+  background-image: radial-gradient(circle, rgba(84,122,149,0.35) 1px, transparent 1px);
+}
+
+body {
+  min-height: 100dvh;
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
   color: var(--text);
-  transition: background-color 0.25s, color 0.25s;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  transition: color 0.25s;
 }
-
-[data-theme="dark"] body {
-  background-image: radial-gradient(circle, rgba(84,122,149,0.35) 1px, transparent 1px);
-}
-
-body { display: flex; flex-direction: column; min-height: 100dvh; overflow-y: auto; }
 
 /* ── Full-width layout ── */
 header, main, .input-area { width: 100%; }
