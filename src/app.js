@@ -5,7 +5,7 @@ const STORAGE_KEY = 'noted_entries';
 const THEME_KEY   = 'noted_theme';
 const PRIVACY_KEY = 'noted_privacy';
 const SORT_KEY    = 'noted_sort';
-const SYMBOLS = { note: '♣', task: '♠', event: '♥', idea: '♦' };
+const SYMBOLS = { note: '♣', task: '♥', event: '♠', idea: '♦' };
 
 // ── State ────────────────────────────────────────────────────────────────────
 let selectedType = 'note';
@@ -265,10 +265,10 @@ function render() {
           <p class="empty-title">Nothing noted yet</p>
           <p class="empty-sub">Capture notes, tasks, events and ideas.<br>Everything gets a timestamp automatically.</p>
           <div class="empty-suits">
-            <span>♣</span>
-            <span>♠</span>
-            <span>♥</span>
-            <span>♦</span>
+            <span>♣&#xFE0F;</span>
+            <span>♥&#xFE0F;</span>
+            <span>♠&#xFE0F;</span>
+            <span>♦&#xFE0F;</span>
           </div>
         </div>
       </div>`;
