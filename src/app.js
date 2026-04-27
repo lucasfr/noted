@@ -264,6 +264,12 @@ function render() {
           </div>
           <p class="empty-title">Nothing noted yet</p>
           <p class="empty-sub">Capture notes, tasks, events and ideas.<br>Everything gets a timestamp automatically.</p>
+          <div class="empty-suits">
+            <span style="color:#C0706A">♣</span>
+            <span style="color:#4A8C6A">♠</span>
+            <span style="color:#7B6CA8">♥</span>
+            <span style="color:#C2A56D">♦</span>
+          </div>
         </div>
       </div>`;
     return;
