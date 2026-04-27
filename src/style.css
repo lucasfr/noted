@@ -110,19 +110,7 @@ header {
   #shortcuts-btn { display: none; }
   .header-actions { display: none; }
   .hamburger-btn  { display: flex; }
-
-  /* Fixed input area so html background shows through beneath the safe area */
-  .input-area {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    padding: 0 0 env(safe-area-inset-bottom, 0);
-  }
-
-  /* Push body content up so it doesn't hide behind the fixed input */
-  body {
-    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0));
-  }
-
+  .input-area { padding: 0 0 calc(16px + env(safe-area-inset-bottom, 0)); }
   .input-island {
     margin: 0 24px;
     border-radius: var(--radius);
