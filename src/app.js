@@ -558,6 +558,14 @@ document.addEventListener('keydown', e => {
   if (mod && e.key === 'p') { e.preventDefault(); document.getElementById('privacy-btn').click(); }
   if (mod && e.key === 'e') { e.preventDefault(); document.getElementById('export-btn').click(); }
   if (mod && e.key === '/') { e.preventDefault(); document.getElementById('entry-input').focus(); }
+  if (mod && e.key === 'm') { e.preventDefault(); document.getElementById('mic-btn').click(); }
+  if (mod && e.key === 'i') { e.preventDefault(); document.getElementById('logo-btn').click(); }
+
+  // 1-4 — select entry type
+  if (e.key === '1') { e.preventDefault(); document.querySelector('.type-btn[data-type="note"]').click(); document.getElementById('entry-input').focus(); }
+  if (e.key === '2') { e.preventDefault(); document.querySelector('.type-btn[data-type="task"]').click(); document.getElementById('entry-input').focus(); }
+  if (e.key === '3') { e.preventDefault(); document.querySelector('.type-btn[data-type="event"]').click(); document.getElementById('entry-input').focus(); }
+  if (e.key === '4') { e.preventDefault(); document.querySelector('.type-btn[data-type="idea"]').click(); document.getElementById('entry-input').focus(); }
 });
 
 // ── About ─────────────────────────────────────────────────────────────────────
