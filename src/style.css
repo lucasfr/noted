@@ -83,7 +83,7 @@ header {
   position: sticky; top: 0; z-index: 100;
   padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px 12px;
   background: var(--header-bg);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--glass-border);
   display: flex; align-items: center; justify-content: space-between;
   gap: 8px;
@@ -326,7 +326,7 @@ main { flex: 1; padding: 16px 16px 0; }
 .input-area {
   position: sticky; bottom: 0; z-index: 100;
   background: var(--input-bg);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border-top: 1px solid var(--glass-border);
   padding: 10px 12px 8px;
 }
