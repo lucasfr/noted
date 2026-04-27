@@ -437,7 +437,7 @@ function addEntry(text) {
 
   save();
   render();
-  const main = document.querySelector('main');
+  const main = document.scrollingElement || document.documentElement;
   main.scrollTop = sortAsc ? main.scrollHeight : 0;
   if (privacyOn) scheduleBlur(entries[entries.length - 1].id);
 }
