@@ -110,6 +110,7 @@ header {
 .hamburger-btn:hover { background: var(--glass-hover); color: var(--accent2); }
 
 @media (max-width: 600px) {
+  #shortcuts-btn { display: none; }
   .header-actions { display: none; }
   .hamburger-btn  { display: flex; }
 }
