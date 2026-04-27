@@ -816,7 +816,7 @@ kbd {
   font-size: 20px;
   line-height: 1.3;
   flex-shrink: 0;
-  width: 20px;
+  width: 28px;
   text-align: center;
   font-weight: 700;
 }
@@ -829,14 +829,14 @@ kbd {
 
 .about-type strong {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text);
 }
 
 .about-type span {
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-muted);
   line-height: 1.4;
 }
