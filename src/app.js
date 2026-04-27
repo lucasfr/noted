@@ -677,7 +677,7 @@ if (hamburgerBtn && drawerOverlay) {
 const ONBOARDING_KEY = 'noted_onboarded';
 const obOverlay = document.getElementById('onboarding-overlay');
 let obStep = 1;
-const obTotal = 5;
+const obTotal = 6;
 
 function obShowStep(n) {
   for (let i = 1; i <= obTotal; i++) {
