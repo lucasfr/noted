@@ -110,7 +110,7 @@ header {
   #shortcuts-btn { display: none; }
   .header-actions { display: none; }
   .hamburger-btn  { display: flex; }
-  .input-area { padding: 0 0 calc(16px + env(safe-area-inset-bottom, 0)); }
+  .input-area { padding: 0; }
   .input-island {
     margin: 0 24px;
     border-radius: var(--radius);
@@ -273,7 +273,7 @@ main { flex: 1; padding: 16px 16px 0; }
 /* ── Input area ── */
 .input-area {
   position: sticky; bottom: 0; z-index: 100;
-  width: 100%; padding: 0 0 env(safe-area-inset-bottom, 0); box-sizing: border-box;
+  width: 100%; padding: 0; box-sizing: border-box;
   background-color: var(--bg);
   background-image: radial-gradient(circle, rgba(84,122,149,0.25) 1px, transparent 1px);
   background-size: 20px 20px;
