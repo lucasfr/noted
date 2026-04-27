@@ -420,7 +420,16 @@ main { flex: 1; overflow-y: auto; padding: 16px 16px 0; }
 }
 
 /* ── Inline editing ── */
-.entry-text { cursor: pointer; }
+.entry.done .entry-text { text-decoration: line-through; opacity: 0.5; }
+.entry.done .bullet-sym { opacity: 0.4; }
+
+.task-done-btn {
+  background: none; border: none; cursor: pointer; padding: 0 6px 0 0;
+  font-size: 18px; line-height: 1; color: var(--bullet-color, var(--accent));
+  flex-shrink: 0; transition: opacity 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.task-done-btn:hover { opacity: 0.7; }
 .entry-text:hover { opacity: 0.75; }
 
 .entry.editing { background: var(--entry-bg-hover); }
