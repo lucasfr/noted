@@ -503,7 +503,34 @@ function showToast(msg) {
   setTimeout(() => el.classList.remove('show'), 2400);
 }
 
-// ── Type selector ────────────────────────────────────────────────────────────
+// ── Island collapse (mobile only) ───────────────────────────────────────────
+const island = document.querySelector('.input-island');
+
+function expandIsland() {
+  island.classList.remove('collapsed');
+  textarea.focus();
+}
+
+function collapseIsland() {
+  if (textarea.value.trim()) return;
+  textarea.blur();
+  island.classList.add('collapsed');
+}
+
+if (window.matchMedia('(max-width: 600px)').matches) {
+  island.classList.add('collapsed');
+  island.addEventListener('click', e => {
+    if (island.classList.contains('collapsed')) {
+      e.stopPropagation();
+      expandIsland();
+    }
+  });
+  document.addEventListener('pointerdown', e => {
+    if (!e.target.closest('.input-island')) collapseIsland();
+  });
+}
+
+
 document.getElementById('type-selector').addEventListener('click', e => {
   const btn = e.target.closest('.type-btn');
   if (!btn) return;
@@ -534,6 +561,7 @@ document.getElementById('submit-btn').addEventListener('click', () => {
   textarea.value = '';
   textarea.style.height = 'auto';
   textarea.focus();
+  collapseIsland();
 });
 
 // ── Export modal ─────────────────────────────────────────────────────────────

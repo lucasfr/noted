@@ -346,6 +346,30 @@ main { flex: 1; padding: 16px 16px 0; }
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border-top: 1px solid var(--glass-border);
   padding: 10px 12px 10px;
+  transition: border-radius 0.3s ease;
+}
+
+.input-island.collapsed {
+  border-radius: 99px !important;
+  padding: 8px 12px;
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+}
+
+.input-island.collapsed .type-selector,
+.input-island.collapsed #entry-input {
+  display: none;
+}
+
+.input-island.collapsed .input-row {
+  justify-content: center;
+  gap: 12px;
+}
+
+.input-island.collapsed .submit-btn,
+.input-island.collapsed .mic-btn {
+  width: 40px;
+  height: 40px;
 }
 
 .type-selector { display: flex; gap: 6px; margin-bottom: 8px; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
