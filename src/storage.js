@@ -2,6 +2,7 @@ export const STORAGE_KEY  = 'noted_entries';
 export const THEME_KEY    = 'noted_theme';
 export const PRIVACY_KEY  = 'noted_privacy';
 export const SORT_KEY     = 'noted_sort';
+export const BLUR_DELAY_KEY = 'noted_blur_delay';
 export const SYMBOLS      = { note: '♣', task: '♠', event: '♥', idea: '♦' };
 
 export let entries = [];

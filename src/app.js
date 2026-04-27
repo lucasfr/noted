@@ -1,6 +1,6 @@
 import './style.css';
 
-import { entries, setEntries, load, save, THEME_KEY, PRIVACY_KEY, SORT_KEY, SYMBOLS } from './storage.js';
+import { entries, setEntries, load, save, THEME_KEY, PRIVACY_KEY, SORT_KEY, BLUR_DELAY_KEY, SYMBOLS } from './storage.js';
 import { render, dayKey, fmtDay } from './render.js';
 import { initSwipe }       from './ui/swipe.js';
 import { initSpeech }      from './ui/speech.js';
@@ -87,7 +87,25 @@ systemDark.addEventListener('change', () => {
 resolveTheme();
 
 // ── Privacy ───────────────────────────────────────────────────────────────────
-const BLUR_DELAY = 15000;
+const BLUR_DELAY_OPTIONS = [5000, 10000, 15000, 30000, 60000];
+let blurDelay = parseInt(localStorage.getItem(BLUR_DELAY_KEY)) || 15000;
+
+function getBlurDelay() { return blurDelay; }
+
+const blurDelaySelect = document.getElementById('blur-delay-select');
+
+function applyBlurDelayUI() {
+  if (blurDelaySelect) blurDelaySelect.value = blurDelay;
+  const row = document.getElementById('blur-delay-row');
+  if (row) row.style.display = privacyOn ? 'flex' : 'none';
+}
+
+if (blurDelaySelect) {
+  blurDelaySelect.addEventListener('change', () => {
+    blurDelay = parseInt(blurDelaySelect.value);
+    localStorage.setItem(BLUR_DELAY_KEY, blurDelay);
+  });
+}
 
 function applyPrivacyUI() {
   document.getElementById('icon-eye').style.display       = privacyOn ? 'none'  : 'block';
@@ -108,13 +126,14 @@ function scheduleBlur(id) {
     const el = document.querySelector(`.entry[data-id="${id}"]`);
     if (el) el.querySelectorAll('.entry-text, .tag').forEach(n => n.classList.add('blurring'));
     blurredIds.add(id);
-  }, BLUR_DELAY);
+  }, getBlurDelay());
 }
 
 document.getElementById('privacy-btn').addEventListener('click', () => {
   privacyOn = !privacyOn;
   localStorage.setItem(PRIVACY_KEY, privacyOn);
   applyPrivacyUI();
+  applyBlurDelayUI();
   if (privacyOn) {
     entries.forEach(e => scheduleBlur(e.id));
   } else {
@@ -126,8 +145,9 @@ document.getElementById('privacy-btn').addEventListener('click', () => {
 });
 
 applyPrivacyUI();
+applyBlurDelayUI();
 
-// ── Sort ──────────────────────────────────────────────────────────────────────
+// ── Sort ───────────────────────────────────────────────────────────────────
 function applySortUI() {
   document.getElementById('icon-sort-new').style.display = sortAsc ? 'none'  : 'block';
   document.getElementById('icon-sort-old').style.display = sortAsc ? 'block' : 'none';
