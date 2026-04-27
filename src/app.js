@@ -519,14 +519,13 @@ document.getElementById('modal-download').addEventListener('click', () => {
 
 // ── Clear today ───────────────────────────────────────────────────────────────
 document.getElementById('clear-btn').addEventListener('click', () => {
-  const todayKey = dayKey(Date.now());
-  const n = entries.filter(e => dayKey(e.timestamp) === todayKey).length;
+  const n = entries.length;
   if (!n) { showToast('Nothing to clear'); return; }
-  if (confirm(`Clear ${n} entr${n === 1 ? 'y' : 'ies'} from today?`)) {
-    entries = entries.filter(e => dayKey(e.timestamp) !== todayKey);
+  if (confirm(`Delete all ${n} entr${n === 1 ? 'y' : 'ies'}? This cannot be undone.`)) {
+    entries = [];
     save();
     render();
-    showToast('Today cleared');
+    showToast('All entries deleted');
   }
 });
 
