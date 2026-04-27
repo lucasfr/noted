@@ -530,26 +530,28 @@ document.getElementById('clear-btn').addEventListener('click', () => {
 });
 
 // ── Keyboard shortcuts ───────────────────────────────────────────────────────────
+const shortcutsOverlay = document.getElementById('shortcuts-overlay');
+document.getElementById('shortcuts-close').addEventListener('click', () => shortcutsOverlay.classList.remove('open'));
+shortcutsOverlay.addEventListener('click', e => { if (e.target === shortcutsOverlay) shortcutsOverlay.classList.remove('open'); });
+
 document.addEventListener('keydown', e => {
   const mod = e.metaKey || e.ctrlKey;
+  const tag = document.activeElement.tagName;
+  const typing = tag === 'TEXTAREA' || tag === 'INPUT';
 
   // Escape — close any open overlay
   if (e.key === 'Escape') {
-    if (document.getElementById('about-overlay').classList.contains('open')) {
-      document.getElementById('about-overlay').classList.remove('open'); return;
-    }
-    if (document.getElementById('modal-overlay').classList.contains('open')) {
-      document.getElementById('modal-overlay').classList.remove('open'); return;
-    }
-    if (document.getElementById('drawer-overlay').classList.contains('open')) {
-      document.getElementById('drawer-overlay').classList.remove('open'); return;
-    }
+    if (shortcutsOverlay.classList.contains('open'))                              { shortcutsOverlay.classList.remove('open'); return; }
+    if (document.getElementById('about-overlay').classList.contains('open'))     { document.getElementById('about-overlay').classList.remove('open'); return; }
+    if (document.getElementById('modal-overlay').classList.contains('open'))     { document.getElementById('modal-overlay').classList.remove('open'); return; }
+    if (document.getElementById('drawer-overlay').classList.contains('open'))    { document.getElementById('drawer-overlay').classList.remove('open'); return; }
     if (editingId) { cancelEdit(editingId); return; }
   }
 
-  // Don’t fire shortcuts when typing in a text field
-  const tag = document.activeElement.tagName;
-  if (tag === 'TEXTAREA' || tag === 'INPUT') return;
+  if (typing) return;
+
+  // ? — show shortcuts
+  if (e.key === '?') { e.preventDefault(); shortcutsOverlay.classList.toggle('open'); return; }
 
   if (mod && e.key === 'd') { e.preventDefault(); document.getElementById('theme-btn').click(); }
   if (mod && e.key === 'p') { e.preventDefault(); document.getElementById('privacy-btn').click(); }

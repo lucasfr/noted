@@ -177,7 +177,26 @@
     </div>
   </div>
 
-  <!-- ── About modal ── -->
+  <!-- ── Shortcuts modal ── -->
+  <div class="shortcuts-overlay" id="shortcuts-overlay">
+    <div class="shortcuts-card">
+      <button class="about-close" id="shortcuts-close" aria-label="Close">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      <div class="shortcuts-title">Keyboard Shortcuts</div>
+      <div class="shortcuts-list">
+        <div class="shortcut-row"><kbd>?</kbd><span>Show this screen</span></div>
+        <div class="shortcut-row"><kbd>Esc</kbd><span>Close modal / cancel edit</span></div>
+        <div class="shortcut-row"><kbd>⌘ /</kbd><span>Focus input</span></div>
+        <div class="shortcut-row"><kbd>⌘ D</kbd><span>Cycle theme</span></div>
+        <div class="shortcut-row"><kbd>⌘ P</kbd><span>Toggle privacy</span></div>
+        <div class="shortcut-row"><kbd>⌘ E</kbd><span>Export entries</span></div>
+      </div>
+      <p class="shortcuts-hint">Use Ctrl instead of ⌘ on Windows/Linux</p>
+    </div>
+  </div>
   <div class="about-overlay" id="about-overlay">
     <div class="about-card">
       <button class="about-close" id="about-close" aria-label="Close">
