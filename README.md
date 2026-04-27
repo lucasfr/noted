@@ -25,11 +25,13 @@ When you're ready to move entries into your permanent notes app, export them as 
 - 👆 **Swipe to edit or delete** — swipe left on any entry to reveal Edit and Delete actions
 - 🌙 **Theme cycling** — Auto / Light / Dark, follows system preference
 - 🎙️ **Voice input** — Web Speech API for hands-free capture
-- 📤 **JSON export** — copy to clipboard or download; take your entries into any notes app
+- ✅ **Task completion** — tap ○/✓ to mark tasks done with strikethrough; swipe right to complete
+- 🔍 **Search** — filter entries by text or #tag (⌘F); shows a “No results” state when empty
+- 📤 **JSON + Markdown export** — copy or download as JSON, or copy as Markdown
 - 📱 **PWA** — installable on iOS, Android and desktop, works fully offline
-- 🍔 **Mobile-optimised** — hamburger menu with bottom drawer on small screens
-- ⌨️ **Keyboard shortcuts** — press `?` for a full list
-- 🎓 **Onboarding** — guided walkthrough on first launch
+- 🍔 **Mobile-optimised** — hamburger menu with bottom drawer; shortcuts accessible via drawer
+- ⌨️ **Keyboard shortcuts** — press `?` on desktop for a full list
+- 🎓 **Onboarding** — guided walkthrough on first launch including PWA install instructions
 
 ## 🗂️ Project Structure
 
