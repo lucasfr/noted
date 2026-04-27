@@ -14,7 +14,7 @@ self.addEventListener('install', e => {
   self.skipWaiting();
 });
 
-// ── Activate: clean up old caches ────────────────────────────────────────────
+// ── Activate: clean up old caches and take control immediately ───────────────
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -24,7 +24,10 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// ── Fetch: network-first for JS/CSS (always fresh), cache-first for assets ───
+// ── Fetch ─────────────────────────────────────────────────────────────────────
+// - HTML: network-first so the app always updates when online
+// - JS/CSS: network-first so deploys are picked up immediately
+// - Everything else (images, fonts): cache-first for speed
 self.addEventListener('fetch', e => {
   const { request } = e;
   const url = new URL(request.url);
@@ -32,8 +35,11 @@ self.addEventListener('fetch', e => {
   // Only handle same-origin requests
   if (url.origin !== location.origin) return;
 
-  // Network-first for JS and CSS so updates deploy immediately
-  if (url.pathname.match(/\.(js|css)$/)) {
+  const isNetworkFirst = url.pathname.match(/\.(js|css)$/) ||
+                         url.pathname === '/' ||
+                         url.pathname.endsWith('.html');
+
+  if (isNetworkFirst) {
     e.respondWith(
       fetch(request)
         .then(res => {
@@ -46,7 +52,7 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Cache-first for everything else (HTML, images, fonts)
+  // Cache-first for images, icons, etc.
   e.respondWith(
     caches.match(request).then(cached => {
       if (cached) return cached;
