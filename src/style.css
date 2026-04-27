@@ -130,7 +130,13 @@ header {
     overflow: visible;
   }
 
-  .type-btn { flex: unset; font-size: 20px; padding: 6px 10px; }
+  .type-btn {
+    flex: unset;
+    width: 100%;
+    font-size: 20px;
+    padding: 6px 10px;
+    white-space: normal;
+  }
 }
 
 /* Drawer — uses visibility:hidden so CSS transitions work (display:none prevents transitions) */
