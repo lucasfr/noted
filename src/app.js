@@ -572,6 +572,48 @@ document.getElementById('modal-download').addEventListener('click', () => {
   modalOverlay.classList.remove('open');
 });
 
+document.getElementById('modal-import-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      // Support both flat array and our export format {days: {date: [entries]}}
+      let imported = [];
+      if (Array.isArray(data)) {
+        imported = data;
+      } else if (data.days) {
+        Object.values(data.days).forEach(day => {
+          day.forEach(e => {
+            imported.push({
+              id:        e.id        || crypto.randomUUID(),
+              timestamp: e.timestamp || Date.now(),
+              type:      e.type      || 'note',
+              text:      e.text      || '',
+              done:      e.done      || false,
+            });
+          });
+        });
+      }
+      if (!imported.length) { showToast('No entries found in file'); return; }
+      // Merge — skip duplicates by id
+      const existingIds = new Set(entries.map(e => e.id));
+      const fresh = imported.filter(e => !existingIds.has(e.id));
+      entries = [...entries, ...fresh].sort((a, b) => a.timestamp - b.timestamp);
+      save();
+      render();
+      modalOverlay.classList.remove('open');
+      showToast(`Imported ${fresh.length} entr${fresh.length === 1 ? 'y' : 'ies'} ✓`);
+    } catch {
+      showToast('Invalid JSON file');
+    }
+    // Reset input so same file can be re-imported if needed
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+});
+
 // ── Clear today ───────────────────────────────────────────────────────────────
 document.getElementById('clear-btn').addEventListener('click', () => {
   const n = entries.length;
