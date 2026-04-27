@@ -73,6 +73,22 @@ html, body {
 
 body { display: flex; flex-direction: column; min-height: 100dvh; overflow-y: auto; }
 
+/* ── iOS PWA: fill safe-area-inset-bottom with matching dot pattern ── */
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: env(safe-area-inset-bottom, 0px);
+  background-color: var(--bg);
+  background-image: radial-gradient(circle, rgba(84,122,149,0.25) 1px, transparent 1px);
+  background-size: 20px 20px;
+  z-index: 99;
+  pointer-events: none;
+}
+[data-theme="dark"] body::after {
+  background-image: radial-gradient(circle, rgba(84,122,149,0.35) 1px, transparent 1px);
+}
+
 /* ── Full-width layout ── */
 header, main, .input-area { width: 100%; }
 
@@ -526,7 +542,7 @@ main { flex: 1; padding: 16px 16px 0; }
 .ob-install { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); padding: 12px 14px; }
 .ob-install-row { display: flex; align-items: flex-start; gap: 10px; font-family: var(--font-body); font-size: 13px; color: var(--text-muted); }
 .ob-install-row strong { color: var(--text); }
-.ob-install-os { font-weight: 700; color: var(--text); flex-shrink: 0; min-width: 80px; }
+.ob-install-os { font-family: var(--font-body); font-weight: 700; color: var(--text); flex-shrink: 0; min-width: 80px; }
 
 /* ── Shortcuts modal ── */
 .shortcuts-overlay {
