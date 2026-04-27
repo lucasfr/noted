@@ -345,10 +345,10 @@ main { flex: 1; overflow-y: auto; padding: 16px 16px 0; }
 }
 .type-btn svg { flex-shrink: 0; }
 .type-btn:hover { color: var(--accent2); }
-.type-btn.active       { background: #C0706A; border-color: #C0706A; color: #fff; box-shadow: 0 2px 8px rgba(192,112,106,0.40); }
-.type-btn.active.task  { background: #4A8C6A; border-color: #4A8C6A; box-shadow: 0 2px 8px rgba(74,140,106,0.35); }
-.type-btn.active.event { background: #7B6CA8; border-color: #7B6CA8; box-shadow: 0 2px 8px rgba(123,108,168,0.35); }
-.type-btn.active.idea  { background: var(--accent2); border-color: var(--accent2); color: #fff; box-shadow: 0 2px 8px rgba(194,165,109,0.40); }
+.type-btn.active       { background: #2C3E50; border-color: #2C3E50; color: #fff; box-shadow: 0 2px 8px rgba(44,62,80,0.40); }
+.type-btn.active.task  { background: #2C3E50; border-color: #2C3E50; box-shadow: 0 2px 8px rgba(44,62,80,0.40); }
+.type-btn.active.event { background: #922B21; border-color: #922B21; box-shadow: 0 2px 8px rgba(146,43,33,0.40); }
+.type-btn.active.idea  { background: #922B21; border-color: #922B21; color: #fff; box-shadow: 0 2px 8px rgba(146,43,33,0.40); }
 
 .input-row { display: flex; gap: 8px; align-items: flex-end; min-width: 0; }
 
@@ -514,10 +514,10 @@ main { flex: 1; overflow-y: auto; padding: 16px 16px 0; }
   transition: all 0.15s;
 }
 .entry-type-pill:hover { color: var(--accent2); }
-.entry-type-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-.entry-type-pill.active[data-type="task"]  { background: #4A8C6A; border-color: #4A8C6A; }
-.entry-type-pill.active[data-type="event"] { background: #7B6CA8; border-color: #7B6CA8; }
-.entry-type-pill.active[data-type="idea"]  { background: var(--accent2); border-color: var(--accent2); }
+.entry-type-pill.active { background: #2C3E50; border-color: #2C3E50; color: #fff; }
+.entry-type-pill.active[data-type="task"]  { background: #2C3E50; border-color: #2C3E50; }
+.entry-type-pill.active[data-type="event"] { background: #922B21; border-color: #922B21; }
+.entry-type-pill.active[data-type="idea"]  { background: #922B21; border-color: #922B21; }
 
 .entry-edit-actions {
   display: flex;
@@ -873,7 +873,7 @@ kbd {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--handle); border-radius: 2px; }
 
-.entry[data-type="note"]  { --bullet-color: #C0706A; }
-.entry[data-type="task"]  { --bullet-color: #4A8C6A; }
-.entry[data-type="event"] { --bullet-color: #7B6CA8; }
-.entry[data-type="idea"]  { --bullet-color: #C2A56D; }
+.entry[data-type="note"]  { --bullet-color: #2C3E50; }
+.entry[data-type="task"]  { --bullet-color: #2C3E50; }
+.entry[data-type="event"] { --bullet-color: #922B21; }
+.entry[data-type="idea"]  { --bullet-color: #922B21; }
