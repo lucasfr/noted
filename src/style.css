@@ -113,6 +113,23 @@ header {
   #shortcuts-btn { display: none; }
   .header-actions { display: none; }
   .hamburger-btn  { display: flex; }
+
+  .input-area {
+    margin: 0 10px calc(10px + env(safe-area-inset-bottom, 0));
+    border-radius: var(--radius);
+    border: 1px solid var(--glass-border);
+    border-top: 1px solid var(--glass-border);
+    box-shadow: 0 4px 24px var(--shadow);
+    padding-bottom: 10px;
+  }
+
+  .type-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: visible;
+  }
+
+  .type-btn { flex: unset; font-size: 20px; padding: 6px 10px; }
 }
 
 /* Drawer — uses visibility:hidden so CSS transitions work (display:none prevents transitions) */
@@ -328,7 +345,7 @@ main { flex: 1; padding: 16px 16px 0; }
   background: var(--input-bg);
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border-top: 1px solid var(--glass-border);
-  padding: 10px 12px 8px;
+  padding: 10px 12px 10px;
 }
 
 .type-selector { display: flex; gap: 6px; margin-bottom: 8px; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
