@@ -760,22 +760,44 @@ if (!SpeechRecognition) {
   recognition.interimResults = true;
   recognition.lang           = navigator.language || 'en-GB';
 
-  let isListening = false;
-  let baseText    = '';
+  let isListening  = false;
+  let baseText     = '';
+  let stopTimeout  = null;
+
+  function setMicUI(active) {
+    micBtn.classList.toggle('mic-active', active);
+    document.getElementById('icon-mic').style.display        = active ? 'none'  : 'block';
+    document.getElementById('icon-mic-active').style.display = active ? 'block' : 'none';
+  }
+
+  function cleanupListening() {
+    isListening = false;
+    clearTimeout(stopTimeout);
+    stopTimeout = null;
+    setMicUI(false);
+  }
 
   function startListening() {
     if (isListening) return;
     isListening = true;
-    baseText    = textarea.value;
-    micBtn.classList.add('mic-active');
-    document.getElementById('icon-mic').style.display        = 'none';
-    document.getElementById('icon-mic-active').style.display = 'block';
-    recognition.start();
+    baseText = textarea.value;
+    setMicUI(true);
+    try {
+      recognition.start();
+    } catch (err) {
+      recognition.abort();
+      cleanupListening();
+    }
   }
 
   function stopListening() {
     if (!isListening) return;
-    recognition.stop();
+    try {
+      recognition.stop();
+    } catch (err) {
+      cleanupListening();
+    }
+    stopTimeout = setTimeout(cleanupListening, 2000);
   }
 
   recognition.addEventListener('result', e => {
@@ -786,23 +808,22 @@ if (!SpeechRecognition) {
   });
 
   recognition.addEventListener('end', () => {
-    isListening = false;
-    micBtn.classList.remove('mic-active');
-    document.getElementById('icon-mic').style.display        = 'block';
-    document.getElementById('icon-mic-active').style.display = 'none';
+    cleanupListening();
   });
 
   recognition.addEventListener('error', e => {
-    isListening = false;
-    micBtn.classList.remove('mic-active');
-    document.getElementById('icon-mic').style.display        = 'block';
-    document.getElementById('icon-mic-active').style.display = 'none';
-    if (e.error !== 'aborted') showToast('Mic error: ' + e.error);
+    const silenced = ['aborted', 'no-speech', 'audio-capture'];
+    if (!silenced.includes(e.error)) showToast('Mic error: ' + e.error);
+    cleanupListening();
   });
 
   micBtn.addEventListener('click', () => {
     if (isListening) stopListening();
     else startListening();
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && isListening) stopListening();
   });
 }
 
