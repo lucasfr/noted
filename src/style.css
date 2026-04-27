@@ -20,6 +20,7 @@
   --header-bg:    rgba(232,237,242,0.28);
   --input-bg:     rgba(232,237,242,0.32);
   --modal-bg:     rgba(244,246,248,0.45);
+  --confirm-bg:   rgba(236,241,245,0.96);
   --handle:       rgba(84,122,149,0.20);
   --tag-bg:       rgba(84,122,149,0.10);
   --tag-border:   rgba(84,122,149,0.22);
@@ -47,6 +48,7 @@
   --header-bg:    rgba(26,35,48,0.35);
   --input-bg:     rgba(26,35,48,0.38);
   --modal-bg:     rgba(26,35,48,0.52);
+  --confirm-bg:   rgba(22,32,44,0.97);
   --handle:       rgba(84,122,149,0.28);
   --tag-bg:       rgba(84,122,149,0.15);
   --tag-border:   rgba(84,122,149,0.32);
@@ -299,8 +301,6 @@ main { flex: 1; padding: 16px 16px 0; }
 .entry-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
 .tag { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--accent); background: var(--tag-bg); border: 1px solid var(--tag-border); border-radius: 6px; padding: 2px 7px; }
 
-/* entry-delete removed — replaced by swipe actions */
-
 /* ── Empty state ── */
 .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; }
 
@@ -501,7 +501,7 @@ main { flex: 1; padding: 16px 16px 0; }
 .confirm-toast {
   position: fixed; bottom: calc(100px + env(safe-area-inset-bottom, 0)); left: 50%;
   transform: translateX(-50%) translateY(12px);
-  background: var(--modal-bg); border: 1px solid var(--glass-border);
+  background: var(--confirm-bg); border: 1px solid var(--glass-border);
   border-radius: var(--radius); box-shadow: 0 4px 24px var(--shadow);
   padding: 14px 18px; z-index: 300; white-space: nowrap; pointer-events: none;
   opacity: 0; transition: all 0.2s ease;
