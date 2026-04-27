@@ -237,6 +237,7 @@ function toggleDone(id) {
   const idx = entries.findIndex(e => e.id === id);
   if (idx === -1) return;
   entries[idx].done = !entries[idx].done;
+  entries[idx].doneAt = entries[idx].done ? Date.now() : null;
   if (navigator.vibrate) navigator.vibrate(6);
   save(showToast);
   doRender();
