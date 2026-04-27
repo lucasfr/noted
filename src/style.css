@@ -356,20 +356,35 @@ main { flex: 1; padding: 16px 16px 0; }
   cursor: pointer;
 }
 
-.input-island.collapsed .type-selector,
-.input-island.collapsed #entry-input {
+.input-island.collapsed .type-selector {
   display: none !important;
 }
 
+.input-island.collapsed #entry-input {
+  display: block !important;
+  min-height: unset !important;
+  height: 36px !important;
+  max-height: 36px !important;
+  padding: 6px 12px !important;
+  font-size: 14px !important;
+  pointer-events: none;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  flex: 1;
+}
+
 .input-island.collapsed .input-row {
-  justify-content: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 6px;
+  align-items: center;
 }
 
 .input-island.collapsed .submit-btn,
 .input-island.collapsed .mic-btn {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
 }
 
 .type-selector { display: flex; gap: 6px; margin-bottom: 8px; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
