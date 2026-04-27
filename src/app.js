@@ -291,7 +291,7 @@ function render() {
     const rows = day.map(e => {
       const tags     = getTags(e.text);
       const tagsHtml = tags.length
-        ? `<div class="entry-tags">${tags.map(t => `<span class="tag">#${t}</span>`).join('')}</div>`
+        ? `<div class="entry-tags">${tags.map(t => `<span class="tag">#${esc(t)}</span>`).join('')}</div>`
         : '';
       return `
         <div class="entry-swipe-wrap" data-id="${e.id}">
