@@ -28,6 +28,7 @@ When you're ready to move entries into your permanent notes app, export them as 
 - ✅ **Task completion** — tap ○/✓ to mark tasks done with strikethrough; swipe right to complete
 - 🔍 **Search** — filter entries by text or #tag (⌘F); shows a “No results” state when empty
 - 📤 **JSON + Markdown export** — copy or download as JSON, or copy as Markdown
+- 📥 **JSON import** — restore entries from a backup file; duplicates are skipped automatically
 - 📱 **PWA** — installable on iOS, Android and desktop, works fully offline
 - 🍔 **Mobile-optimised** — hamburger menu with bottom drawer; shortcuts accessible via drawer
 - ⌨️ **Keyboard shortcuts** — press `?` on desktop for a full list
