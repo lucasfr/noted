@@ -368,6 +368,7 @@ main { flex: 1; padding: 16px 16px 0; }
   transition: border-color 0.15s, box-shadow 0.15s; box-shadow: 0 1px 4px var(--shadow);
 }
 #entry-input::placeholder { color: var(--text-dim); }
+[data-theme="dark"] #entry-input::placeholder { color: var(--text-muted); }
 #entry-input:focus { border-color: rgba(84,122,149,0.50); box-shadow: 0 0 0 3px rgba(84,122,149,0.12); }
 
 .submit-btn {
