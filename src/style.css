@@ -273,9 +273,16 @@ main { flex: 1; padding: 16px 16px 0; }
 .input-area {
   position: sticky; bottom: 0; z-index: 100;
   width: 100%; box-sizing: border-box;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  background-color: var(--bg);
+  background-image: radial-gradient(circle, rgba(84,122,149,0.25) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+[data-theme="dark"] .input-area {
+  background-image: radial-gradient(circle, rgba(84,122,149,0.35) 1px, transparent 1px);
 }
 .input-island {
-  background: var(--input-bg);
+  background: transparent;
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border-top: 1px solid var(--glass-border);
   padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0)); transition: border-radius 0.3s ease;
@@ -283,7 +290,6 @@ main { flex: 1; padding: 16px 16px 0; }
 .input-island.collapsed {
   border-radius: 99px !important; padding: 8px 12px;
   border: 1px solid var(--glass-border); cursor: pointer;
-  margin-bottom: calc(8px + env(safe-area-inset-bottom, 0));
 }
 .input-island.collapsed .type-selector { display: none !important; }
 .input-island.collapsed #entry-input {
