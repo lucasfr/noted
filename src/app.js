@@ -584,7 +584,7 @@ if (!SpeechRecognition) {
   const recognition      = new SpeechRecognition();
   recognition.continuous     = false;
   recognition.interimResults = true;
-  recognition.lang           = 'en-GB';
+  recognition.lang           = navigator.language || 'en-GB';
 
   let isListening = false;
   let baseText    = '';
