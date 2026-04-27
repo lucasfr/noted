@@ -383,12 +383,13 @@ main { flex: 1; padding: 16px 16px 0; }
 }
 .modal-overlay.open { opacity: 1; pointer-events: all; }
 .modal {
-  background: var(--modal-bg); border: 1px solid var(--glass-border);
+  background: rgba(244,246,248,0.72); border: 1px solid var(--glass-border);
   border-radius: var(--radius) var(--radius) 0 0;
   padding: 16px 20px 24px;
   width: 100%; transform: translateY(20px); transition: transform 0.2s ease;
   box-shadow: 0 -4px 24px var(--shadow);
 }
+[data-theme="dark"] .modal { background: rgba(26,35,48,0.78); }
 .modal-overlay.open .modal { transform: translateY(0); }
 .modal-handle { width: 36px; height: 4px; background: var(--handle); border-radius: 99px; margin: 0 auto 16px; }
 .modal h2 { font-family: var(--font-head); font-size: 22px; color: var(--text); margin-bottom: 12px; }
