@@ -348,15 +348,6 @@ function render() {
     });
   });
 
-  document.addEventListener('pointerdown', e => {
-    if (!e.target.closest('.entry-swipe-wrap')) {
-      container.querySelectorAll('.entry').forEach(el => {
-        el.style.transition = '';
-        el.style.transform = 'translateX(0)';
-      });
-    }
-  }, { capture: true });
-
   container.querySelectorAll('.day-delete-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.day;
@@ -719,6 +710,16 @@ document.getElementById('header-date').textContent = new Date().toLocaleDateStri
 // ── Init ──────────────────────────────────────────────────────────────────────
 load();
 render();
+
+// Close any revealed swipe when tapping outside — registered once, not per render
+document.addEventListener('pointerdown', e => {
+  if (!e.target.closest('.entry-swipe-wrap')) {
+    document.querySelectorAll('.entry').forEach(el => {
+      el.style.transition = '';
+      el.style.transform = 'translateX(0)';
+    });
+  }
+}, { capture: true });
 if (privacyOn) {
   entries.forEach(e => {
     blurredIds.add(e.id);
