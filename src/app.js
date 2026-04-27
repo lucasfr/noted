@@ -133,7 +133,11 @@ function load() {
 }
 
 function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  } catch (e) {
+    showToast('Storage full — oldest entries may not be saved');
+  }
 }
 
 // ── Formatting helpers ───────────────────────────────────────────────────────
