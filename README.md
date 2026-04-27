@@ -19,15 +19,17 @@ When you're ready to move entries into your permanent notes app, export them as 
 
 - 🔒 **Privacy-first** — all data stays on-device in localStorage; nothing is transmitted or synced
 - 🔇 **Privacy mode** — blur all entry text with a tap; auto-reveals on hover, auto-hides after 15 seconds
-- 📝 **Four entry types** — note `·`, task `○`, event `◇`, idea `💡` — each colour-coded with a left accent stripe
-- 🕐 **Automatic timestamps** on every entry, grouped by day
+- 📝 **Four entry types** — ♣ note, ♠ task, ♥ event, ♦ idea — each colour-coded with a left accent stripe
+- 🕐 **Automatic timestamps** on every entry, grouped by day, with per-day delete
 - **#hashtag detection** — tags extracted and rendered as inline pills
 - 👆 **Swipe to edit or delete** — swipe left on any entry to reveal Edit and Delete actions
 - 🌙 **Theme cycling** — Auto / Light / Dark, follows system preference
 - 🎙️ **Voice input** — Web Speech API for hands-free capture
 - 📤 **JSON export** — copy to clipboard or download; take your entries into any notes app
-- 📱 **PWA** — installable on iOS and Android, works fully offline
+- 📱 **PWA** — installable on iOS, Android and desktop, works fully offline
 - 🍔 **Mobile-optimised** — hamburger menu with bottom drawer on small screens
+- ⌨️ **Keyboard shortcuts** — press `?` for a full list
+- 🎓 **Onboarding** — guided walkthrough on first launch
 
 ## 🗂️ Project Structure
 
@@ -90,9 +92,11 @@ All design tokens are CSS variables in `src/style.css`.
 |---|---|---|---|
 | `--bg` | `#E8EDF2` | `#1A2330` | Page background |
 | `--text` | `#2C3947` | `#D8E4EC` | Primary text |
-| `--accent` | `#547A95` | `#547A95` | Buttons, note bullets |
-| `--accent2` | `#C2A56D` | `#C2A56D` | Gold, day labels, idea bullets |
+| `--accent` | `#547A95` | `#C2A56D` | Buttons (blue light / gold dark) |
+| `--accent2` | `#C2A56D` | `#C2A56D` | Gold, day labels |
 | `--entry-bg` | `#FFFFFF` | `#1E2D3D` | Entry card background (opaque) |
+
+Entry type colours: ♣ note `#C0706A` · ♠ task `#4A8C6A` · ♥ event `#7B6CA8` · ♦ idea `#C2A56D`
 
 The app uses a dot-grid background, glassy frosted-glass UI elements (`backdrop-filter: blur`), and fully opaque entry cards to support the swipe-to-reveal interaction.
 
