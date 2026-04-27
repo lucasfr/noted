@@ -801,9 +801,13 @@ kbd {
   gap: 10px;
   margin-bottom: 20px;
   padding: 16px;
-  background: var(--glass);
+  background: rgba(255,255,255,0.70);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-sm);
+}
+
+[data-theme="dark"] .about-types {
+  background: rgba(26,35,48,0.70);
 }
 
 .about-type {
