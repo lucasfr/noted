@@ -610,9 +610,20 @@ kbd { font-family: var(--font-body); font-size: 13px; font-weight: 700; color: v
 .about-type span { font-family: var(--font-body); font-size: 12px; color: var(--text-muted); line-height: 1.4; }
 .about-features { font-family: var(--font-body); font-size: 13px; color: var(--text-muted); line-height: 1.8; margin-bottom: 20px; text-align: center; }
 .about-features span { color: var(--accent); font-weight: 600; }
-.about-credit { font-family: var(--font-body); font-size: 13px; color: var(--text-muted); text-align: center; padding-top: 16px; border-top: 1px solid var(--glass-border); }
+.about-credit { font-family: var(--font-body); font-size: 13px; color: var(--text-muted); text-align: center; }
 .about-credit a { color: var(--accent); text-decoration: none; }
 .about-credit a:hover { color: var(--accent2); }
+.about-footer { padding-top: 16px; border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.about-github-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 30px;
+  color: var(--text); font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  padding: 9px 20px; text-decoration: none; transition: all 0.15s;
+}
+.about-github-btn:hover { background: var(--glass-hover); color: var(--accent2); }
+.about-license { font-family: var(--font-body); font-size: 12px; color: var(--text-muted); text-align: center; }
+.about-license a { color: var(--accent); text-decoration: none; }
+.about-license a:hover { color: var(--accent2); }
 
 /* ── Misc ── */
 ::-webkit-scrollbar { width: 4px; }
