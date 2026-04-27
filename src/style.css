@@ -73,22 +73,6 @@ html, body {
 
 body { display: flex; flex-direction: column; min-height: 100dvh; overflow-y: auto; }
 
-/* ── iOS PWA: fill safe-area-inset-bottom with matching dot pattern ── */
-body::after {
-  content: '';
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: env(safe-area-inset-bottom, 0px);
-  background-color: var(--bg);
-  background-image: radial-gradient(circle, rgba(84,122,149,0.25) 1px, transparent 1px);
-  background-size: 20px 20px;
-  z-index: 99;
-  pointer-events: none;
-}
-[data-theme="dark"] body::after {
-  background-image: radial-gradient(circle, rgba(84,122,149,0.35) 1px, transparent 1px);
-}
-
 /* ── Full-width layout ── */
 header, main, .input-area { width: 100%; }
 
@@ -126,7 +110,16 @@ header {
   #shortcuts-btn { display: none; }
   .header-actions { display: none; }
   .hamburger-btn  { display: flex; }
-  .input-area { padding: 0 0 calc(16px + env(safe-area-inset-bottom, 0)); }
+  .input-area {
+    padding: 0 0 env(safe-area-inset-bottom, 0);
+    /* Dot pattern fills the safe-area padding zone on iOS PWA */
+    background-color: var(--bg);
+    background-image: radial-gradient(circle, rgba(84,122,149,0.25) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  [data-theme="dark"] .input-area {
+    background-image: radial-gradient(circle, rgba(84,122,149,0.35) 1px, transparent 1px);
+  }
   .input-island {
     margin: 0 24px;
     border-radius: var(--radius);
