@@ -54,6 +54,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9M3 12h5m10-8v8m0 0l-3-3m3 3l3-3"/>
           </svg>
         </button>
+        <button class="icon-btn" id="search-btn" title="Search (⌘F)">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+        </button>
         <button class="icon-btn" id="shortcuts-btn" title="Keyboard shortcuts (?)">
           <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/>
@@ -118,6 +121,11 @@
       <p class="drawer-section-label">Actions</p>
       <div class="drawer-row">
 
+        <button class="drawer-btn" id="drawer-search-btn">
+          <span class="drawer-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg></span>
+          <span class="drawer-label">Search</span>
+        </button>
+
         <button class="drawer-btn" id="drawer-shortcuts-btn">
           <span class="drawer-icon">
             <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg>
@@ -145,6 +153,15 @@
 
   <!-- ── Entries ── -->
   <main id="entries-container"></main>
+
+  <!-- Search bar -->
+  <div class="search-bar" id="search-bar" style="display:none">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+    <input id="search-input" type="search" placeholder="Search entries or #tags…" autocomplete="off">
+    <button id="search-close">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
 
   <!-- ── Input area ── -->
   <div class="input-area">
@@ -199,6 +216,7 @@
       <div class="shortcuts-list">
         <div class="shortcut-row"><kbd>?</kbd><span>Show this screen</span></div>
         <div class="shortcut-row"><kbd>Esc</kbd><span>Close modal / cancel edit</span></div>
+        <div class="shortcut-row"><kbd>⌘ F</kbd><span>Search entries</span></div>
         <div class="shortcut-row"><kbd>⌘ /</kbd><span>Focus input</span></div>
         <div class="shortcut-row"><kbd>⌘ D</kbd><span>Cycle theme</span></div>
         <div class="shortcut-row"><kbd>⌘ P</kbd><span>Toggle privacy</span></div>

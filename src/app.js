@@ -13,6 +13,7 @@ let entries      = [];
 let privacyOn    = localStorage.getItem(PRIVACY_KEY) === 'true';
 let sortAsc      = localStorage.getItem(SORT_KEY) === 'true';
 let editingId    = null;
+let searchQuery  = '';
 
 // ── Theme ────────────────────────────────────────────────────────────────────
 const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -264,8 +265,14 @@ function render() {
     return;
   }
 
+  const filtered = searchQuery
+    ? entries.filter(e =>
+        e.text.toLowerCase().includes(searchQuery) ||
+        getTags(e.text).some(t => t.toLowerCase().includes(searchQuery.replace('#', ''))))
+    : entries;
+
   const groups = {};
-  entries.forEach(e => {
+  filtered.forEach(e => {
     const k = dayKey(e.timestamp);
     if (!groups[k]) groups[k] = [];
     groups[k].push(e);
@@ -520,6 +527,37 @@ document.getElementById('clear-btn').addEventListener('click', () => {
   }
 });
 
+// ── Search ───────────────────────────────────────────────────────────────────────────
+const searchBar   = document.getElementById('search-bar');
+const searchInput = document.getElementById('search-input');
+
+function openSearch() {
+  searchBar.style.display = 'flex';
+  searchInput.focus();
+}
+function closeSearch() {
+  searchBar.style.display = 'none';
+  searchQuery = '';
+  searchInput.value = '';
+  render();
+}
+
+document.getElementById('search-btn').addEventListener('click', openSearch);
+document.getElementById('search-close').addEventListener('click', closeSearch);
+searchInput.addEventListener('input', () => {
+  searchQuery = searchInput.value.toLowerCase().trim();
+  render();
+});
+searchInput.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSearch();
+});
+if (drawerOverlay) {
+  document.getElementById('drawer-search-btn').addEventListener('click', () => {
+    drawerOverlay.classList.remove('open');
+    openSearch();
+  });
+}
+
 // ── Keyboard shortcuts ───────────────────────────────────────────────────────────
 const shortcutsOverlay = document.getElementById('shortcuts-overlay');
 document.getElementById('shortcuts-btn').addEventListener('click', () => shortcutsOverlay.classList.toggle('open'));
@@ -545,6 +583,7 @@ document.addEventListener('keydown', e => {
   // ? — show shortcuts
   if (e.key === '?') { e.preventDefault(); shortcutsOverlay.classList.toggle('open'); return; }
 
+  if (mod && e.key === 'f') { e.preventDefault(); openSearch(); return; }
   if (mod && e.key === 'd') { e.preventDefault(); document.getElementById('theme-btn').click(); }
   if (mod && e.key === 'p') { e.preventDefault(); document.getElementById('privacy-btn').click(); }
   if (mod && e.key === 'e') { e.preventDefault(); document.getElementById('export-btn').click(); }
