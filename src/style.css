@@ -615,3 +615,8 @@ kbd { font-family: var(--font-body); font-size: 13px; font-weight: 700; color: v
 .entry[data-type="task"]  { --bullet-color: #2C3E50; }
 .entry[data-type="event"] { --bullet-color: #922B21; }
 .entry[data-type="idea"]  { --bullet-color: #922B21; }
+
+[data-theme="dark"] .entry[data-type="note"]  { --bullet-color: #7EB8D4; }
+[data-theme="dark"] .entry[data-type="task"]  { --bullet-color: #7EB8D4; }
+[data-theme="dark"] .entry[data-type="event"] { --bullet-color: #E8756A; }
+[data-theme="dark"] .entry[data-type="idea"]  { --bullet-color: #E8756A; }
