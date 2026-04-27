@@ -358,7 +358,7 @@ main { flex: 1; padding: 16px 16px 0; }
 
 .input-island.collapsed .type-selector,
 .input-island.collapsed #entry-input {
-  display: none;
+  display: none !important;
 }
 
 .input-island.collapsed .input-row {

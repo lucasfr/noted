@@ -517,7 +517,7 @@ function collapseIsland() {
   island.classList.add('collapsed');
 }
 
-if (window.matchMedia('(max-width: 600px)').matches) {
+if (window.innerWidth <= 600) {
   island.classList.add('collapsed');
   island.addEventListener('click', e => {
     if (island.classList.contains('collapsed')) {
