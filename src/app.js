@@ -329,7 +329,7 @@ function render() {
           </div>
           <div class="entry" data-type="${e.type}" data-id="${e.id}" ${e.done ? 'data-done="true"' : ''}>
             <span class="entry-time">${fmtTime(e.timestamp)}</span>
-            ${e.type === 'task' ? `<button class="task-checkbox ${e.done ? 'checked' : ''}" data-id="${e.id}" aria-label="Toggle done">
+            ${e.type === 'task' ? `<span class="bullet-sym">${SYMBOLS[e.type]}</span><button class="task-checkbox ${e.done ? 'checked' : ''}" data-id="${e.id}" aria-label="Toggle done">
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l3.5 3.5L13 4.5"/></svg>
             </button>` : `<span class="bullet-sym">${SYMBOLS[e.type]}</span>`}
             <div class="entry-body">
