@@ -35,12 +35,12 @@
   --text:         #D8E4EC;
   --text-muted:   #7A90A0;
   --text-dim:     #3A4F5E;
-  --accent:       #547A95;
-  --accent-dark:  #6B98B5;
+  --accent:       #C2A56D;
+  --accent-dark:  #D4B87A;
   --accent2:      #C2A56D;
-  --glass:        rgba(255,255,255,0.08);
-  --glass-hover:  rgba(255,255,255,0.14);
-  --glass-border: rgba(255,255,255,0.14);
+  --glass:        rgba(255,255,255,0.10);
+  --glass-hover:  rgba(255,255,255,0.18);
+  --glass-border: rgba(255,255,255,0.08);
   --shadow:       rgba(0,0,0,0.28);
   --entry-bg:     #1E2D3D;
   --entry-bg-hover: #243040;
