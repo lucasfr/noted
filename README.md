@@ -3,6 +3,8 @@
 **A privacy-first, offline PWA bullet journal for capturing timestamped thoughts, tasks, events and ideas.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Version](https://img.shields.io/badge/version-1.0.0--beta1-blue)](https://github.com/lucasfr/noted/releases/tag/v1.0.0-beta1)
+[![Changelog](https://img.shields.io/badge/changelog-📝-lightgrey)](./CHANGELOG.md)
 [![PWA](https://img.shields.io/badge/PWA-offline--ready-5A0FC8)](https://noted.lfranca.uk)
 [![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)](./vite.config.js)
 [![Netlify](https://img.shields.io/badge/Deployed-Netlify-00C7B7?logo=netlify&logoColor=white)](https://noted.lfranca.uk)
@@ -118,4 +120,4 @@ The app uses a dot-grid background, glassy frosted-glass UI elements (`backdrop-
 
 Released under the [MIT License](./LICENSE).
 
-Copyright © Lucas França, 2025
+Copyright © Lucas França, 2026
