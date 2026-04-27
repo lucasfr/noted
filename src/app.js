@@ -17,7 +17,12 @@ let blurTimers   = {};
 let blurredIds   = new Set();
 
 // ── Render wrapper ────────────────────────────────────────────────────────────
-function doRender() {
+// Preserves scroll position across re-renders so edits, deletes and task
+// toggles don't jump the user back to the top.
+function doRender({ scrollToNew = false } = {}) {
+  const scroller = document.scrollingElement || document.documentElement;
+  const savedScroll = scrollToNew ? null : scroller.scrollTop;
+
   render({
     searchQuery,
     sortAsc,
@@ -28,8 +33,15 @@ function doRender() {
     toggleDone,
     onDayDelete,
   });
+
   const container = document.getElementById('entries-container');
   initSwipe(container, { startEdit, deleteEntry });
+
+  if (scrollToNew) {
+    scroller.scrollTop = sortAsc ? scroller.scrollHeight : 0;
+  } else if (savedScroll !== null) {
+    scroller.scrollTop = savedScroll;
+  }
 }
 
 // ── Theme ─────────────────────────────────────────────────────────────────────
@@ -219,9 +231,7 @@ function addEntry(text) {
   if (navigator.vibrate) navigator.vibrate(8);
   entries.push({ id: crypto.randomUUID(), timestamp: Date.now(), type: selectedType, text });
   save(showToast);
-  doRender();
-  const main = document.scrollingElement || document.documentElement;
-  main.scrollTop = sortAsc ? main.scrollHeight : 0;
+  doRender({ scrollToNew: true });
   if (privacyOn) scheduleBlur(entries[entries.length - 1].id);
 }
 
