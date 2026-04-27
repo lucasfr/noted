@@ -93,19 +93,65 @@ let blurDelay = parseInt(localStorage.getItem(BLUR_DELAY_KEY)) || 15000;
 function getBlurDelay() { return blurDelay; }
 
 const blurDelaySelect = document.getElementById('blur-delay-select');
+const privacyPopover  = document.getElementById('privacy-popover');
+const popoverSelect   = document.getElementById('privacy-popover-select');
 
 function applyBlurDelayUI() {
   if (blurDelaySelect) blurDelaySelect.value = blurDelay;
+  if (popoverSelect)   popoverSelect.value   = blurDelay;
   const row = document.getElementById('blur-delay-row');
   if (row) row.style.display = privacyOn ? 'flex' : 'none';
+}
+
+function openPrivacyPopover() {
+  if (!privacyPopover) return;
+  if (popoverSelect) popoverSelect.value = blurDelay;
+  privacyPopover.style.display = 'flex';
+}
+
+function closePrivacyPopover() {
+  if (privacyPopover) privacyPopover.style.display = 'none';
 }
 
 if (blurDelaySelect) {
   blurDelaySelect.addEventListener('change', () => {
     blurDelay = parseInt(blurDelaySelect.value);
     localStorage.setItem(BLUR_DELAY_KEY, blurDelay);
+    if (popoverSelect) popoverSelect.value = blurDelay;
   });
 }
+
+if (popoverSelect) {
+  popoverSelect.addEventListener('change', () => {
+    blurDelay = parseInt(popoverSelect.value);
+    localStorage.setItem(BLUR_DELAY_KEY, blurDelay);
+    if (blurDelaySelect) blurDelaySelect.value = blurDelay;
+    closePrivacyPopover();
+  });
+}
+
+// Right-click on desktop
+document.getElementById('privacy-btn').addEventListener('contextmenu', e => {
+  e.preventDefault();
+  openPrivacyPopover();
+});
+
+// Long-press on mobile
+let longPressTimer = null;
+document.getElementById('privacy-btn').addEventListener('pointerdown', () => {
+  longPressTimer = setTimeout(() => { openPrivacyPopover(); }, 500);
+});
+document.getElementById('privacy-btn').addEventListener('pointerup',   () => clearTimeout(longPressTimer));
+document.getElementById('privacy-btn').addEventListener('pointerleave', () => clearTimeout(longPressTimer));
+
+// Close on outside click
+document.addEventListener('pointerdown', e => {
+  if (privacyPopover && privacyPopover.style.display !== 'none') {
+    if (!privacyPopover.contains(e.target) && e.target.id !== 'privacy-btn') {
+      closePrivacyPopover();
+    }
+  }
+});
 
 function applyPrivacyUI() {
   document.getElementById('icon-eye').style.display       = privacyOn ? 'none'  : 'block';

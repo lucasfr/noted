@@ -161,6 +161,17 @@ header {
   -webkit-appearance: none;
 }
 .drawer-blur-select:focus { border-color: var(--accent); }
+.privacy-popover {
+  position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  background: rgba(244,246,248,0.92); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm); box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  white-space: nowrap; z-index: 200;
+}
+[data-theme="dark"] .privacy-popover { background: rgba(26,35,48,0.92); }
+.privacy-popover-label { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text-muted); }
+.privacy-btn-wrap { position: relative; display: flex; }
 
 .btn-group {
   display: flex; gap: 4px; align-items: center; padding: 4px;
