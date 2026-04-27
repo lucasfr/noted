@@ -253,6 +253,71 @@
 
   <div class="toast" id="toast"></div>
 
+  <!-- ── Onboarding ── -->
+  <div class="onboarding-overlay" id="onboarding-overlay">
+    <div class="onboarding-card">
+
+      <div class="onboarding-step" id="ob-step-1">
+        <div class="ob-icon">🗒️</div>
+        <h2>Welcome to Noted!</h2>
+        <p>A minimal bullet journal for capturing thoughts, tasks, events and ideas — all timestamped automatically.</p>
+        <p class="ob-privacy">&#x1F512; <strong>Privacy-first.</strong> Everything stays on your device. No account, no server, no tracking.</p>
+      </div>
+
+      <div class="onboarding-step" id="ob-step-2" style="display:none">
+        <div class="ob-suits">
+          <span style="color:#547A95">♣</span>
+          <span style="color:#4A8C6A">♠</span>
+          <span style="color:#7B6CA8">♥</span>
+          <span style="color:#C2A56D">♦</span>
+        </div>
+        <h2>Four entry types</h2>
+        <p>Choose your type before writing. Each gets its own colour and symbol in your journal.</p>
+        <div class="ob-types">
+          <div><span style="color:#547A95">♣</span> <strong>Note</strong> — a thought or observation</div>
+          <div><span style="color:#4A8C6A">♠</span> <strong>Task</strong> — something to do</div>
+          <div><span style="color:#7B6CA8">♥</span> <strong>Event</strong> — something happening</div>
+          <div><span style="color:#C2A56D">♦</span> <strong>Idea</strong> — a spark worth keeping</div>
+        </div>
+      </div>
+
+      <div class="onboarding-step" id="ob-step-3" style="display:none">
+        <div class="ob-icon">&#x1F3F7;️</div>
+        <h2>Use #hashtags</h2>
+        <p>Add <strong>#tags</strong> anywhere in your entry text. They’ll be extracted and shown as coloured pills automatically.</p>
+        <p class="ob-example">e.g. <em>Meeting went well #work #q2</em></p>
+      </div>
+
+      <div class="onboarding-step" id="ob-step-4" style="display:none">
+        <div class="ob-icon">📤</div>
+        <h2>Export to Obsidian</h2>
+        <p>Tap the <strong>download</strong> icon to export your entries as JSON. Then paste into Claude:</p>
+        <p class="ob-example"><em>“Convert this Noted JSON into an Obsidian Daily Note in markdown.”</em></p>
+      </div>
+
+      <div class="onboarding-step" id="ob-step-5" style="display:none">
+        <div class="ob-icon">👆</div>
+        <h2>Swipe to edit or delete</h2>
+        <p>Swipe any entry to the <strong>left</strong> to reveal Edit and Delete actions.</p>
+        <p>On desktop, click any entry text to edit inline.</p>
+      </div>
+
+      <div class="onboarding-dots" id="ob-dots">
+        <span class="ob-dot active" data-step="1"></span>
+        <span class="ob-dot" data-step="2"></span>
+        <span class="ob-dot" data-step="3"></span>
+        <span class="ob-dot" data-step="4"></span>
+        <span class="ob-dot" data-step="5"></span>
+      </div>
+
+      <div class="onboarding-actions">
+        <button class="ob-btn-skip" id="ob-skip">Skip</button>
+        <button class="ob-btn-next" id="ob-next">Next →</button>
+      </div>
+
+    </div>
+  </div>
+
   <script type="module" src="/src/app.js"></script>
 </body>
 </html>

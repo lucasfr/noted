@@ -673,6 +673,44 @@ if (hamburgerBtn && drawerOverlay) {
   });
 }
 
+// ── Onboarding ───────────────────────────────────────────────────────────────────────────
+const ONBOARDING_KEY = 'noted_onboarded';
+const obOverlay = document.getElementById('onboarding-overlay');
+let obStep = 1;
+const obTotal = 5;
+
+function obShowStep(n) {
+  for (let i = 1; i <= obTotal; i++) {
+    document.getElementById(`ob-step-${i}`).style.display = i === n ? '' : 'none';
+  }
+  document.querySelectorAll('.ob-dot').forEach(d => {
+    d.classList.toggle('active', +d.dataset.step === n);
+  });
+  const nextBtn = document.getElementById('ob-next');
+  nextBtn.textContent = n === obTotal ? 'Get started →' : 'Next →';
+}
+
+function obClose() {
+  obOverlay.classList.remove('open');
+  localStorage.setItem(ONBOARDING_KEY, '1');
+}
+
+document.getElementById('ob-skip').addEventListener('click', obClose);
+document.getElementById('ob-next').addEventListener('click', () => {
+  if (obStep < obTotal) {
+    obStep++;
+    obShowStep(obStep);
+  } else {
+    obClose();
+  }
+});
+
+// Show on first visit
+if (!localStorage.getItem(ONBOARDING_KEY)) {
+  obShowStep(1);
+  requestAnimationFrame(() => obOverlay.classList.add('open'));
+}
+
 // ── Header date ───────────────────────────────────────────────────────────────
 document.getElementById('header-date').textContent = new Date().toLocaleDateString('en-GB', {
   weekday: 'short', day: 'numeric', month: 'short',
