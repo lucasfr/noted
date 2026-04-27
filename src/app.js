@@ -5,7 +5,7 @@ const STORAGE_KEY = 'noted_entries';
 const THEME_KEY   = 'noted_theme';
 const PRIVACY_KEY = 'noted_privacy';
 const SORT_KEY    = 'noted_sort';
-const SYMBOLS = { note: '♣', task: '♥', event: '♠', idea: '♦' };
+const SYMBOLS = { note: '♣', task: '♠', event: '♥', idea: '♦' };
 
 // ── State ────────────────────────────────────────────────────────────────────
 let selectedType = 'note';
