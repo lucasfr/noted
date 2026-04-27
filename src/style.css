@@ -115,10 +115,11 @@ header {
   .hamburger-btn  { display: flex; }
 
   .input-area {
-    padding: 0 24px calc(16px + env(safe-area-inset-bottom, 0));
+    padding: 0 0 calc(16px + env(safe-area-inset-bottom, 0));
   }
 
   .input-island {
+    margin: 0 24px;
     border-radius: var(--radius);
     border: 1px solid var(--glass-border);
     box-shadow: 0 4px 24px var(--shadow);
