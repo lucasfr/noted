@@ -275,6 +275,22 @@ function render() {
         getTags(e.text).some(t => t.toLowerCase().includes(searchQuery.replace('#', ''))))
     : entries;
 
+  if (!filtered.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-card">
+          <div class="empty-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+            </svg>
+          </div>
+          <p class="empty-title">No results</p>
+          <p class="empty-sub">No entries match “${esc(searchQuery)}”</p>
+        </div>
+      </div>`;
+    return;
+  }
+
   const groups = {};
   filtered.forEach(e => {
     const k = dayKey(e.timestamp);
@@ -608,11 +624,12 @@ shortcutsOverlay.addEventListener('click', e => { if (e.target === shortcutsOver
 document.addEventListener('keydown', e => {
   const mod = e.metaKey || e.ctrlKey;
   const tag = document.activeElement.tagName;
-  const typing = tag === 'TEXTAREA' || tag === 'INPUT';
+  const typing = (tag === 'TEXTAREA' || tag === 'INPUT' || document.activeElement.isContentEditable) && document.activeElement !== document.body;
 
   // Escape — close any open overlay
   if (e.key === 'Escape') {
     if (shortcutsOverlay.classList.contains('open'))                              { shortcutsOverlay.classList.remove('open'); return; }
+    if (document.getElementById('onboarding-overlay').classList.contains('open')) { obClose(); return; }
     if (document.getElementById('about-overlay').classList.contains('open'))     { document.getElementById('about-overlay').classList.remove('open'); return; }
     if (document.getElementById('modal-overlay').classList.contains('open'))     { document.getElementById('modal-overlay').classList.remove('open'); return; }
     if (document.getElementById('drawer-overlay').classList.contains('open'))    { document.getElementById('drawer-overlay').classList.remove('open'); return; }
