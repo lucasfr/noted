@@ -337,7 +337,10 @@ function render() {
       }
       dx = dX;
       const base = revealed ? -actionsW : 0;
-      entry.style.transform = `translateX(${Math.max(-actionsW, Math.min(0, base + dx))}px)`;
+      // Allow right swipe up to 60px for tasks only
+      const isTask = entry.dataset.type === 'task';
+      const maxRight = isTask ? 60 : 0;
+      entry.style.transform = `translateX(${Math.max(-actionsW, Math.min(maxRight, base + dx))}px)`;
     });
     entry.addEventListener('pointerup', e => {
       entry.style.transition = '';
@@ -345,6 +348,12 @@ function render() {
         if (revealed) { collapse(); return; }
         const textEl = e.target.closest('.entry-text');
         if (textEl) startEdit(wrap.dataset.id);
+        return;
+      }
+      // Swipe right on task → toggle done
+      if (dx > 40 && entry.dataset.type === 'task') {
+        collapse();
+        toggleDone(wrap.dataset.id);
         return;
       }
       dx < -40 ? reveal() : collapse();
