@@ -16,6 +16,36 @@ export function showToast(msg) {
   setTimeout(() => el.classList.remove('show'), 2400);
 }
 
+// ── Confirm toast ─────────────────────────────────────────────────────────────
+let confirmCleanup = null;
+
+export function showConfirm(msg, onYes) {
+  // Dismiss any existing confirm first
+  if (confirmCleanup) confirmCleanup();
+
+  const toast  = document.getElementById('confirm-toast');
+  const msgEl  = document.getElementById('confirm-toast-msg');
+  const yesBtn = document.getElementById('confirm-toast-yes');
+  const noBtn  = document.getElementById('confirm-toast-no');
+
+  msgEl.textContent = msg;
+  toast.classList.add('show');
+
+  function cleanup() {
+    toast.classList.remove('show');
+    yesBtn.removeEventListener('click', handleYes);
+    noBtn.removeEventListener('click', handleNo);
+    confirmCleanup = null;
+  }
+
+  function handleYes() { cleanup(); onYes(); }
+  function handleNo()  { cleanup(); }
+
+  yesBtn.addEventListener('click', handleYes);
+  noBtn.addEventListener('click', handleNo);
+  confirmCleanup = cleanup;
+}
+
 // ── Export modal ─────────────────────────────────────────────────────────────
 function buildMarkdown() {
   const SYM = { note: '♣', task: '♠', event: '♥', idea: '♦' };
@@ -161,11 +191,14 @@ export function initClearBtn({ render }) {
   document.getElementById('clear-btn').addEventListener('click', () => {
     const n = entries.length;
     if (!n) { showToast('Nothing to clear'); return; }
-    if (confirm(`Delete all ${n} entr${n === 1 ? 'y' : 'ies'}? This cannot be undone.`)) {
-      setEntries([]);
-      save(showToast);
-      render();
-      showToast('All entries deleted');
-    }
+    showConfirm(
+      `Delete all ${n} entr${n === 1 ? 'y' : 'ies'}?`,
+      () => {
+        setEntries([]);
+        save(showToast);
+        render();
+        showToast('All entries deleted');
+      }
+    );
   });
 }

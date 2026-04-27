@@ -4,7 +4,7 @@ import { entries, setEntries, load, save, THEME_KEY, PRIVACY_KEY, SORT_KEY, SYMB
 import { render, dayKey, fmtDay } from './render.js';
 import { initSwipe }       from './ui/swipe.js';
 import { initSpeech }      from './ui/speech.js';
-import { showToast, initExportModal, initShortcutsModal, initAboutModal, initClearBtn } from './ui/modals.js';
+import { showToast, showConfirm, initExportModal, initShortcutsModal, initAboutModal, initClearBtn } from './ui/modals.js';
 import { initOnboarding }  from './ui/onboarding.js';
 
 // ── App state ─────────────────────────────────────────────────────────────────
@@ -17,10 +17,8 @@ let blurTimers   = {};
 let blurredIds   = new Set();
 
 // ── Render wrapper ────────────────────────────────────────────────────────────
-// Preserves scroll position across re-renders so edits, deletes and task
-// toggles don't jump the user back to the top.
 function doRender({ scrollToNew = false } = {}) {
-  const scroller = document.scrollingElement || document.documentElement;
+  const scroller    = document.scrollingElement || document.documentElement;
   const savedScroll = scrollToNew ? null : scroller.scrollTop;
 
   render({
@@ -256,12 +254,15 @@ function deleteEntry(id) {
 
 function onDayDelete(key, label) {
   const n = entries.filter(e => dayKey(e.timestamp) === key).length;
-  if (confirm(`Delete all ${n} entr${n === 1 ? 'y' : 'ies'} from ${label}?`)) {
-    setEntries(entries.filter(e => dayKey(e.timestamp) !== key));
-    save(showToast);
-    doRender();
-    showToast('Day deleted');
-  }
+  showConfirm(
+    `Delete all ${n} entr${n === 1 ? 'y' : 'ies'} from ${label}?`,
+    () => {
+      setEntries(entries.filter(e => dayKey(e.timestamp) !== key));
+      save(showToast);
+      doRender();
+      showToast('Day deleted');
+    }
+  );
 }
 
 // ── Type selector ─────────────────────────────────────────────────────────────
