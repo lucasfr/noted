@@ -115,12 +115,13 @@ header {
   .hamburger-btn  { display: flex; }
 
   .input-area {
-    margin: 0 10px calc(10px + env(safe-area-inset-bottom, 0));
+    padding: 0 10px calc(10px + env(safe-area-inset-bottom, 0));
+  }
+
+  .input-island {
     border-radius: var(--radius);
     border: 1px solid var(--glass-border);
-    border-top: 1px solid var(--glass-border);
     box-shadow: 0 4px 24px var(--shadow);
-    padding-bottom: 10px;
   }
 
   .type-selector {
@@ -342,6 +343,11 @@ main { flex: 1; padding: 16px 16px 0; }
 /* ── Input area ── */
 .input-area {
   position: sticky; bottom: 0; z-index: 100;
+  width: 100%;
+  padding: 0 0 env(safe-area-inset-bottom, 0);
+}
+
+.input-island {
   background: var(--input-bg);
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border-top: 1px solid var(--glass-border);
