@@ -305,7 +305,7 @@ main { flex: 1; padding: 16px 16px 0; }
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
-  box-shadow: 0 4px 24px var(--shadow), 0 8px 40px rgba(44,57,71,0.12);
+  box-shadow: 0 4px 24px var(--shadow), 0 8px 40px rgba(44,57,71,0.22);
   padding: 10px 12px 10px; transition: border-radius 0.3s ease, padding 0.3s ease;
   max-width: 680px; margin: 0 auto;
 }
