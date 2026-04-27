@@ -391,6 +391,7 @@ function render() {
 function addEntry(text) {
   text = text.trim();
   if (!text) return;
+  if (navigator.vibrate) navigator.vibrate(8);
 
   entries.push({
     id:        crypto.randomUUID(),
