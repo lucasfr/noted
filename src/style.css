@@ -110,16 +110,19 @@ header {
   #shortcuts-btn { display: none; }
   .header-actions { display: none; }
   .hamburger-btn  { display: flex; }
+
+  /* Fixed input area so html background shows through beneath the safe area */
   .input-area {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
     padding: 0 0 env(safe-area-inset-bottom, 0);
-    /* Dot pattern fills the safe-area padding zone on iOS PWA */
-    background-color: var(--bg);
-    background-image: radial-gradient(circle, rgba(84,122,149,0.25) 1px, transparent 1px);
-    background-size: 20px 20px;
   }
-  [data-theme="dark"] .input-area {
-    background-image: radial-gradient(circle, rgba(84,122,149,0.35) 1px, transparent 1px);
+
+  /* Push body content up so it doesn't hide behind the fixed input */
+  body {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0));
   }
+
   .input-island {
     margin: 0 24px;
     border-radius: var(--radius);
