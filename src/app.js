@@ -436,7 +436,7 @@ function buildExport() {
     exported_at: new Date().toISOString(),
     app:         'noted',
     version:     '1.0.0',
-    note:        'Paste into Claude: "Convert this Noted JSON into an Obsidian Daily Note in markdown"',
+    note:        'Export your entries and take them into your permanent notes app.',
     days,
   };
 }
