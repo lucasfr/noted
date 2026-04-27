@@ -533,7 +533,7 @@ main { flex: 1; overflow-y: auto; padding: 16px 16px 0; }
 }
 .onboarding-step p {
   font-family: var(--font-body); font-size: 15px; line-height: 1.65;
-  color: var(--text-muted); margin-bottom: 10px;
+  color: var(--text-muted); margin-bottom: 10px; text-align: justify;
 }
 
 .ob-icon {
@@ -696,6 +696,7 @@ kbd {
   line-height: 1.6;
   color: var(--text);
   margin-bottom: 20px;
+  text-align: justify;
 }
 
 .about-types {
