@@ -417,6 +417,26 @@ function deleteEntry(id) {
 }
 
 // ── Export ───────────────────────────────────────────────────────────────────
+function buildMarkdown() {
+  const SYM = { note: '♣', task: '♠', event: '♥', idea: '♦' };
+  return Object.entries(
+    entries.reduce((acc, e) => {
+      const k = dayKey(e.timestamp);
+      if (!acc[k]) acc[k] = [];
+      acc[k].push(e);
+      return acc;
+    }, {})
+  ).sort(([a],[b]) => a.localeCompare(b))
+   .map(([, day]) => {
+      const heading = `## ${fmtDay(day[0].timestamp)}`;
+      const lines = day.map(e => {
+        const strike = e.done ? '~~' : '';
+        return `- ${SYM[e.type]} ${strike}${e.text}${strike} _(${fmtTime(e.timestamp)})_`;
+      });
+      return [heading, ...lines].join('\n');
+   }).join('\n\n');
+}
+
 function buildExport() {
   const days = {};
   entries.forEach(e => {
@@ -499,6 +519,13 @@ modalOverlay.addEventListener('click', e => {
 document.getElementById('modal-copy').addEventListener('click', () => {
   navigator.clipboard.writeText(JSON.stringify(buildExport(), null, 2)).then(() => {
     showToast('Copied ✓');
+    modalOverlay.classList.remove('open');
+  });
+});
+
+document.getElementById('modal-copy-md').addEventListener('click', () => {
+  navigator.clipboard.writeText(buildMarkdown()).then(() => {
+    showToast('Copied as Markdown ✓');
     modalOverlay.classList.remove('open');
   });
 });
