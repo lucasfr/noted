@@ -123,20 +123,6 @@ header {
     border: 1px solid var(--glass-border);
     box-shadow: 0 4px 24px var(--shadow);
   }
-
-  .type-selector {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    overflow: visible;
-  }
-
-  .type-btn {
-    flex: unset;
-    width: 100%;
-    font-size: 20px;
-    padding: 6px 10px;
-    white-space: normal;
-  }
 }
 
 /* Drawer — uses visibility:hidden so CSS transitions work (display:none prevents transitions) */
@@ -362,6 +348,21 @@ main { flex: 1; padding: 16px 16px 0; }
 
 .type-selector { display: flex; gap: 6px; margin-bottom: 8px; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
 .type-selector::-webkit-scrollbar { display: none; }
+
+@media (max-width: 600px) {
+  .type-selector {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    overflow-x: visible !important;
+  }
+  .type-btn {
+    flex: none !important;
+    width: 100% !important;
+    white-space: normal !important;
+    font-size: 20px;
+    padding: 6px 10px;
+  }
+}
 
 .type-btn {
   background: var(--glass); border: 1px solid var(--glass-border); border-radius: 30px;
