@@ -110,12 +110,6 @@ header {
   #shortcuts-btn { display: none; }
   .header-actions { display: none; }
   .hamburger-btn  { display: flex; }
-  .input-island {
-    margin: 0 24px;
-    border-radius: var(--radius);
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 4px 24px var(--shadow);
-  }
 }
 
 /* ── Drawer ── */
@@ -273,19 +267,22 @@ main { flex: 1; padding: 16px 16px 0; }
 .input-area {
   position: sticky; bottom: 0; z-index: 100;
   width: 100%; box-sizing: border-box;
-  padding-bottom: 36px;
-  background-color: var(--bg);
-  background-image: radial-gradient(circle, rgba(84,122,149,0.25) 1px, transparent 1px);
-  background-size: 20px 20px;
+  padding: 12px 24px 36px;
+  background: transparent;
+  pointer-events: none;
 }
 [data-theme="dark"] .input-area {
-  background-image: radial-gradient(circle, rgba(84,122,149,0.35) 1px, transparent 1px);
+  background: transparent;
 }
 .input-island {
-  background: transparent;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  border-top: 1px solid var(--glass-border);
-  padding: 10px 12px 10px; transition: border-radius 0.3s ease;
+  pointer-events: all;
+  background: var(--bg);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px var(--shadow);
+  padding: 10px 12px 10px; transition: border-radius 0.3s ease, padding 0.3s ease;
+  max-width: 680px; margin: 0 auto;
 }
 .input-island.collapsed {
   border-radius: 99px !important; padding: 8px 12px;
@@ -309,6 +306,7 @@ main { flex: 1; padding: 16px 16px 0; }
 @media (max-width: 600px) {
   .type-selector { display: grid !important; grid-template-columns: 1fr 1fr !important; overflow-x: visible !important; }
   .type-btn { flex: none !important; width: 100% !important; white-space: normal !important; font-size: 20px; padding: 6px 10px; }
+  .input-island { max-width: 100%; }
 }
 
 .type-btn {
