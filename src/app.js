@@ -531,6 +531,7 @@ document.getElementById('clear-btn').addEventListener('click', () => {
 
 // ── Keyboard shortcuts ───────────────────────────────────────────────────────────
 const shortcutsOverlay = document.getElementById('shortcuts-overlay');
+document.getElementById('shortcuts-btn').addEventListener('click', () => shortcutsOverlay.classList.toggle('open'));
 document.getElementById('shortcuts-close').addEventListener('click', () => shortcutsOverlay.classList.remove('open'));
 shortcutsOverlay.addEventListener('click', e => { if (e.target === shortcutsOverlay) shortcutsOverlay.classList.remove('open'); });
 
@@ -649,6 +650,10 @@ if (hamburgerBtn && drawerOverlay) {
   });
   document.getElementById('drawer-sort-btn').addEventListener('click', () => {
     document.getElementById('sort-btn').click();
+  });
+  document.getElementById('drawer-shortcuts-btn').addEventListener('click', () => {
+    drawerOverlay.classList.remove('open');
+    shortcutsOverlay.classList.toggle('open');
   });
   document.getElementById('drawer-export-btn').addEventListener('click', () => {
     drawerOverlay.classList.remove('open');
