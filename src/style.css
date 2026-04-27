@@ -505,11 +505,14 @@ main { flex: 1; padding: 16px 16px 0; }
 }
 .onboarding-overlay.open { opacity: 1; pointer-events: all; }
 .onboarding-card {
-  background: var(--modal-bg); border: 1px solid var(--glass-border);
+  background: rgba(244,246,248,0.82); border: 1px solid var(--glass-border);
   border-radius: var(--radius); box-shadow: 0 12px 48px rgba(0,0,0,0.22);
   padding: 40px 32px 28px; width: 100%; max-width: 420px;
   transform: translateY(16px) scale(0.97); transition: transform 0.3s ease;
 }
+[data-theme="dark"] .onboarding-card { background: rgba(26,35,48,0.88); }
+.onboarding-card .onboarding-step p { color: var(--text); }
+.onboarding-card .ob-types div { color: var(--text); }
 .onboarding-overlay.open .onboarding-card { transform: translateY(0) scale(1); }
 .onboarding-step h2 { font-family: var(--font-head); font-size: 24px; color: var(--text); margin-bottom: 12px; }
 .onboarding-step p { font-family: var(--font-body); font-size: 15px; line-height: 1.65; color: var(--text-muted); margin-bottom: 10px; text-align: justify; }
