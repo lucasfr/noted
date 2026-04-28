@@ -125,7 +125,7 @@ header {
   background: rgba(244,246,248,0.72); border: 1px solid var(--glass-border);
   border-radius: var(--radius) var(--radius) 0 0;
   box-shadow: 0 -4px 24px var(--shadow); width: 100%;
-  padding: 12px 20px 24px;
+  padding: 12px 20px calc(env(safe-area-inset-bottom, 16px) + 16px);
   transform: translateY(100%); transition: transform 0.25s ease;
 }
 [data-theme="dark"] .drawer { background: rgba(26,35,48,0.78); }
@@ -577,8 +577,9 @@ main { flex: 1; padding: 16px 16px 0; }
 .shortcuts-overlay {
   position: fixed; inset: 0; background: rgba(26,35,48,0.45);
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  z-index: 300; display: flex; align-items: center; justify-content: center;
-  padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  z-index: 300; display: flex; align-items: flex-start; justify-content: center;
+  padding: calc(env(safe-area-inset-top, 44px) + 16px) 24px 24px;
+  opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
 }
 .shortcuts-overlay.open { opacity: 1; pointer-events: all; }
 .shortcuts-card {
@@ -605,8 +606,9 @@ kbd { font-family: var(--font-body); font-size: 13px; font-weight: 700; color: v
 .about-overlay {
   position: fixed; inset: 0; background: rgba(26,35,48,0.45);
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  z-index: 300; display: flex; align-items: center; justify-content: center;
-  padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  z-index: 300; display: flex; align-items: flex-start; justify-content: center;
+  padding: calc(env(safe-area-inset-top, 44px) + 16px) 24px 24px;
+  opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
 }
 .about-overlay.open { opacity: 1; pointer-events: all; }
 .about-card {
