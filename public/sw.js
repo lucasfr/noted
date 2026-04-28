@@ -1,4 +1,4 @@
-const CACHE = 'noted-v4';
+const CACHE = 'noted-v1';
 
 // App shell — everything needed to run offline
 const PRECACHE = [

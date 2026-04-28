@@ -475,13 +475,6 @@ document.getElementById('header-date').textContent = new Date().toLocaleDateStri
   weekday: 'short', day: 'numeric', month: 'short',
 });
 
-// ── Force reflow on load to fix sticky input position on iOS PWA ─────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-    window.dispatchEvent(new Event('resize'));
-  }, 100);
-});
-
 // ── Init ──────────────────────────────────────────────────────────────────────
 load();
 if (privacyOn) entries.forEach(e => blurredIds.add(e.id));
