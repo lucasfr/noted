@@ -476,7 +476,7 @@ document.getElementById('header-date').textContent = new Date().toLocaleDateStri
 });
 
 // ── Force reflow on load to fix sticky input position on iOS PWA ─────────────────
-window.addEventListener('load', () => {
+document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     window.scrollTo(0, 1);
     window.scrollTo(0, 0);
