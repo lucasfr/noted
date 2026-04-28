@@ -18,7 +18,7 @@ let blurredIds   = new Set();
 
 // ── Render wrapper ────────────────────────────────────────────────────────────
 function doRender({ scrollToNew = false } = {}) {
-  const scroller    = document.scrollingElement || document.documentElement;
+  const scroller    = document.querySelector('main');
   const savedScroll = scrollToNew ? null : scroller.scrollTop;
 
   render({

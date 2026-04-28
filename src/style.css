@@ -72,9 +72,9 @@ html, body {
 }
 
 body {
-  display: flex; flex-direction: column; min-height: 100dvh; overflow-y: auto;
+  display: flex; flex-direction: column;
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 /* ── Full-width layout ── */
@@ -212,7 +212,7 @@ header {
 #search-close svg { width: 18px; height: 18px; }
 
 /* ── Entries ── */
-main { flex: 1; padding: 16px 16px 0; }
+main { flex: 1; padding: 16px 16px 0; overflow-y: auto; }
 
 .day-label {
   font-family: var(--font-body); font-size: 15px; font-weight: 600;
