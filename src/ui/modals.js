@@ -3,8 +3,15 @@ import { fmtTime, dayKey, fmtDay, getTags } from '../render.js';
 
 // ── Shared helpers ────────────────────────────────────────────────────────────
 const safeAreaCap = () => document.getElementById('overlay-safe-area');
-export const showCap = () => safeAreaCap()?.classList.add('visible');
-export const hideCap = () => safeAreaCap()?.classList.remove('visible');
+export const showCap = () => {
+  safeAreaCap()?.classList.add('visible');
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = 'rgba(26,35,48,0.45)');
+};
+export const hideCap = () => {
+  safeAreaCap()?.classList.remove('visible');
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = dark ? '#1A2330' : '#E8EDF2');
+};
 
 function closeOnBackdrop(overlay, cls) {
   overlay.addEventListener('click', e => {
