@@ -54,6 +54,27 @@
   --tag-border:   rgba(84,122,149,0.32);
 }
 
+/* ── Overlay safe-area cap ── */
+#overlay-safe-area {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: env(safe-area-inset-top, 0px);
+  background: rgb(139,146,155);
+  z-index: 500;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+[data-theme="dark"] #overlay-safe-area { background: rgb(26,35,48); }
+#overlay-safe-area.visible { opacity: 1; }
+
+html.overlay-open {
+  background-color: rgb(139,146,155);
+}
+[data-theme="dark"] html.overlay-open, html.overlay-open[data-theme="dark"] {
+  background-color: rgb(26,35,48);
+}
+
 /* ── Background dot grid ── */
 html, body {
   height: 100%;
@@ -292,7 +313,7 @@ main { flex: 1; padding: 16px 16px 0; }
 .input-area {
   position: sticky; bottom: 0; z-index: 100;
   width: 100%; box-sizing: border-box;
-  padding: 12px 24px 36px;
+  padding: 12px 24px env(safe-area-inset-bottom, 16px);
   background: transparent;
   pointer-events: none;
 }
