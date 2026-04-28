@@ -56,7 +56,8 @@
 
 /* ── Background dot grid ── */
 html, body {
-  height: 100%;
+  height: 100vh;
+  height: -webkit-fill-available;
   background-color: var(--bg);
   background-image: radial-gradient(circle, rgba(84,122,149,0.25) 1px, transparent 1px);
   background-size: 20px 20px;
@@ -71,7 +72,7 @@ html, body {
   background-image: radial-gradient(circle, rgba(84,122,149,0.35) 1px, transparent 1px);
 }
 
-body { display: flex; flex-direction: column; min-height: 100dvh; overflow-y: auto; }
+body { display: flex; flex-direction: column; min-height: 100vh; min-height: -webkit-fill-available; overflow-y: auto; }
 
 /* ── Full-width layout ── */
 header, main, .input-area { width: 100%; }
