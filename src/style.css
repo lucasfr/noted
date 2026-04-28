@@ -313,7 +313,7 @@ main { flex: 1; padding: 16px 16px 0; }
 .input-area {
   position: sticky; bottom: 0; z-index: 100;
   width: 100%; box-sizing: border-box;
-  padding: 12px 24px env(safe-area-inset-bottom, 16px);
+  padding: 12px 24px 36px;
   background: transparent;
   pointer-events: none;
 }
