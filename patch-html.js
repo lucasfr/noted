@@ -1,40 +1,54 @@
 #!/usr/bin/env node
-// patch-html.js — runs after expo export to inject PWA meta tags
-const fs = require('fs');
+const fs   = require('fs');
 const path = require('path');
 
 const indexPath = path.join(__dirname, 'dist', 'index.html');
 let html = fs.readFileSync(indexPath, 'utf8');
 
-// Replace viewport
+// 1. Replace viewport
 html = html.replace(
   /<meta name="viewport"[^>]*>/,
-  '<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />'
+  '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />'
 );
 
-// Replace entire style block
+// 2. Replace expo-reset style with SleepDiaries-style pwa-global + expo-reset
 html = html.replace(
   /<style id="expo-reset">[\s\S]*?<\/style>/,
-  `<style id="expo-reset">
-      html, body {
-        height: 100%;
-        background-color: #E8EDF2;
-        background-image: radial-gradient(circle, rgba(84,122,149,0.25) 1px, transparent 1px);
-        background-size: 20px 20px;
-      }
-      @media (prefers-color-scheme: dark) {
+  `<style id="pwa-global">
+    html, body {
+        background: #E8EDF2;
+        margin: 0;
+        padding: 0;
+    }
+    @media (prefers-color-scheme: dark) {
+        html, body { background: #1A2330; }
+    }
+    @media all and (display-mode: standalone) {
         html, body {
-          background-color: #1A2330;
-          background-image: radial-gradient(circle, rgba(84,122,149,0.35) 1px, transparent 1px);
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            overflow: hidden;
+            box-sizing: border-box;
         }
-      }
-      body { overflow: hidden; position: fixed; top: 0; left: 0; right: 0; bottom: 0; margin: 0; padding: 0; }
-      #root { display: flex; height: 100%; flex: 1; }
-      #root > div { min-height: 100dvh; }
+        #root {
+            width: 100% !important;
+            max-width: none !important;
+            height: 100% !important;
+            position: fixed !important;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: inherit;
+        }
+    }
+    </style>
+    <style id="expo-reset">
+    #root, body, html { height: 100%; }
+    body { overflow: hidden; }
+    #root { display: flex; }
     </style>`
 );
 
-// Add PWA meta tags after charset
+// 3. Add PWA meta tags after charset
 html = html.replace(
   '<meta charset="utf-8" />',
   `<meta charset="utf-8" />
@@ -43,11 +57,26 @@ html = html.replace(
     <meta name="apple-mobile-web-app-title" content="Noted!" />`
 );
 
-// Add dark theme-color
+// 4. Add dark theme-color
 html = html.replace(
   '<meta name="theme-color" content="#E8EDF2">',
   `<meta name="theme-color" content="#E8EDF2" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A2330" media="(prefers-color-scheme: dark)">`
+);
+
+// 5. Add inline script to set background from stored theme before React mounts
+html = html.replace(
+  '<div id="root"></div>',
+  `<script>
+    try {
+      var t = localStorage.getItem('noted_theme');
+      var dark = t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      var bg = dark ? '#1A2330' : '#E8EDF2';
+      document.documentElement.style.background = bg;
+      document.body.style.background = bg;
+    } catch(e) {}
+  </script>
+  <div id="root"></div>`
 );
 
 fs.writeFileSync(indexPath, html);
