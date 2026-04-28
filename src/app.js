@@ -4,7 +4,7 @@ import { entries, setEntries, load, save, THEME_KEY, PRIVACY_KEY, SORT_KEY, BLUR
 import { render, dayKey, fmtDay } from './render.js';
 import { initSwipe }       from './ui/swipe.js';
 import { initSpeech }      from './ui/speech.js';
-import { showToast, showConfirm, initExportModal, initShortcutsModal, initAboutModal, initClearBtn, showCap, hideCap } from './ui/modals.js';
+import { showToast, showConfirm, initExportModal, initShortcutsModal, initAboutModal, initClearBtn } from './ui/modals.js';
 import { initOnboarding }  from './ui/onboarding.js';
 
 // ── App state ─────────────────────────────────────────────────────────────────
@@ -416,9 +416,9 @@ const drawerOverlay = document.getElementById('drawer-overlay');
 const hamburgerBtn  = document.getElementById('hamburger-btn');
 
 if (hamburgerBtn && drawerOverlay) {
-  hamburgerBtn.addEventListener('click', () => { drawerOverlay.classList.add('open'); showCap(); });
+  hamburgerBtn.addEventListener('click', () => drawerOverlay.classList.add('open'));
   drawerOverlay.addEventListener('click', e => {
-    if (e.target === drawerOverlay) { drawerOverlay.classList.remove('open'); hideCap(); }
+    if (e.target === drawerOverlay) drawerOverlay.classList.remove('open');
   });
   document.getElementById('drawer-theme-btn').addEventListener('click',    () => document.getElementById('theme-btn').click());
   document.getElementById('drawer-privacy-btn').addEventListener('click',  () => document.getElementById('privacy-btn').click());
