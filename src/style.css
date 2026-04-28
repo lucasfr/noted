@@ -71,11 +71,7 @@ html, body {
   background-image: radial-gradient(circle, rgba(84,122,149,0.35) 1px, transparent 1px);
 }
 
-body {
-  display: flex; flex-direction: column;
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  overflow: hidden;
-}
+body { display: flex; flex-direction: column; min-height: 100dvh; overflow-y: auto; }
 
 /* ── Full-width layout ── */
 header, main, .input-area { width: 100%; }
@@ -212,7 +208,7 @@ header {
 #search-close svg { width: 18px; height: 18px; }
 
 /* ── Entries ── */
-main { flex: 1; padding: 16px 16px 0; overflow-y: auto; }
+main { flex: 1; padding: 16px 16px 0; }
 
 .day-label {
   font-family: var(--font-body); font-size: 15px; font-weight: 600;
@@ -296,7 +292,7 @@ main { flex: 1; padding: 16px 16px 0; overflow-y: auto; }
 .input-area {
   position: sticky; bottom: 0; z-index: 100;
   width: 100%; box-sizing: border-box;
-  padding: 12px 24px 36px;
+  padding: 12px 24px calc(env(safe-area-inset-bottom, 34px) + 12px);
   background: transparent;
   pointer-events: none;
 }

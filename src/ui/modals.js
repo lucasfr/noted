@@ -2,17 +2,6 @@ import { entries, setEntries, save } from '../storage.js';
 import { fmtTime, dayKey, fmtDay, getTags } from '../render.js';
 
 // ── Shared helpers ────────────────────────────────────────────────────────────
-const safeAreaCap = () => document.getElementById('overlay-safe-area');
-export const showCap = () => {
-  safeAreaCap()?.classList.add('visible');
-  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = 'rgba(26,35,48,0.45)');
-};
-export const hideCap = () => {
-  safeAreaCap()?.classList.remove('visible');
-  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = dark ? '#1A2330' : '#E8EDF2');
-};
-
 function closeOnBackdrop(overlay, cls) {
   overlay.addEventListener('click', e => {
     if (e.target === overlay) overlay.classList.remove(cls);
@@ -107,10 +96,10 @@ export function initExportModal({ render }) {
 
   document.getElementById('export-btn').addEventListener('click', () => {
     document.getElementById('export-preview').textContent = JSON.stringify(buildExport(), null, 2);
-    overlay.classList.add('open'); showCap();
+    overlay.classList.add('open');
   });
 
-  document.getElementById('modal-close').addEventListener('click', () => { overlay.classList.remove('open'); hideCap(); });
+  document.getElementById('modal-close').addEventListener('click', () => overlay.classList.remove('open'));
   closeOnBackdrop(overlay, 'open');
 
   document.getElementById('modal-copy').addEventListener('click', () => {
@@ -182,8 +171,8 @@ export function initExportModal({ render }) {
 // ── Shortcuts modal ──────────────────────────────────────────────────────────
 export function initShortcutsModal() {
   const overlay = document.getElementById('shortcuts-overlay');
-  document.getElementById('shortcuts-btn').addEventListener('click', () => { overlay.classList.toggle('open'); overlay.classList.contains('open') ? showCap() : hideCap(); });
-  document.getElementById('shortcuts-close').addEventListener('click', () => { overlay.classList.remove('open'); hideCap(); });
+  document.getElementById('shortcuts-btn').addEventListener('click', () => overlay.classList.toggle('open'));
+  document.getElementById('shortcuts-close').addEventListener('click', () => overlay.classList.remove('open'));
   closeOnBackdrop(overlay, 'open');
   return overlay;
 }
@@ -191,8 +180,8 @@ export function initShortcutsModal() {
 // ── About modal ──────────────────────────────────────────────────────────────
 export function initAboutModal() {
   const overlay = document.getElementById('about-overlay');
-  document.getElementById('logo-btn').addEventListener('click', () => { overlay.classList.add('open'); showCap(); });
-  document.getElementById('about-close').addEventListener('click', () => { overlay.classList.remove('open'); hideCap(); });
+  document.getElementById('logo-btn').addEventListener('click', () => overlay.classList.add('open'));
+  document.getElementById('about-close').addEventListener('click', () => overlay.classList.remove('open'));
   closeOnBackdrop(overlay, 'open');
   return overlay;
 }
