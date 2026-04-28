@@ -475,17 +475,13 @@ document.getElementById('header-date').textContent = new Date().toLocaleDateStri
   weekday: 'short', day: 'numeric', month: 'short',
 });
 
-// ── Input area keyboard avoidance ─────────────────────────────────────────────────────
-if (window.visualViewport) {
-  const inputArea = document.querySelector('.input-area');
-  const updateInputPos = () => {
-    const vv = window.visualViewport;
-    const offset = window.innerHeight - vv.height - vv.offsetTop;
-    inputArea.style.bottom = offset > 0 ? offset + 'px' : '';
-  };
-  window.visualViewport.addEventListener('resize', updateInputPos);
-  window.visualViewport.addEventListener('scroll', updateInputPos);
-}
+// ── Force reflow on load to fix sticky input position on iOS PWA ─────────────────
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    window.scrollTo(0, 1);
+    window.scrollTo(0, 0);
+  }, 100);
+});
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 load();
