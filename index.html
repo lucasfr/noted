@@ -414,8 +414,11 @@
   <script type="module" src="/src/app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js');
+      // Unregister all existing SWs first to force fresh load
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        Promise.all(regs.map(r => r.unregister())).then(() => {
+          navigator.serviceWorker.register('/sw.js');
+        });
       });
     }
   </script>
