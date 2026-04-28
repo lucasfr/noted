@@ -274,7 +274,7 @@ main { flex: 1; padding: 16px 16px 0; }
 .tag { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--accent); background: var(--tag-bg); border: 1px solid var(--tag-border); border-radius: 6px; padding: 2px 7px; }
 
 /* ── Empty state ── */
-.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; }
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; min-height: 60dvh; }
 .empty-card {
   background: rgba(255,255,255,0.40); border: 1px solid rgba(255,255,255,0.60);
   border-radius: var(--radius); box-shadow: 0 4px 24px var(--shadow);
