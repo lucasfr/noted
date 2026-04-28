@@ -54,36 +54,6 @@
   --tag-border:   rgba(84,122,149,0.32);
 }
 
-/* ── Overlay safe-area cap ── */
-#overlay-safe-area {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: env(safe-area-inset-top, 0px);
-  background: rgb(139,146,155);
-  backdrop-filter: none; -webkit-backdrop-filter: none;
-  z-index: 500;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-#overlay-safe-area.visible { opacity: 1; }
-[data-theme="dark"] #overlay-safe-area {
-  background: rgb(26,35,48);
-}
-
-/* ── Full-viewport background (covers safe areas on iOS PWA) ── */
-#bg {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-color: var(--bg);
-  background-image: radial-gradient(circle, rgba(84,122,149,0.25) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-[data-theme="dark"] #bg {
-  background-image: radial-gradient(circle, rgba(84,122,149,0.35) 1px, transparent 1px);
-}
-
 /* ── Background dot grid ── */
 html, body {
   height: 100%;
@@ -142,27 +112,9 @@ header {
   .hamburger-btn  { display: flex; }
 }
 
-/* ── Overlay safe-area top fill ── */
-/* Paints the overlay colour into the status-bar/notch area in standalone PWA */
-.drawer-overlay::before,
-.modal-overlay::before,
-.about-overlay::before,
-.shortcuts-overlay::before,
-.onboarding-overlay::before {
-  content: '';
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: env(safe-area-inset-top, 0px);
-  background: rgba(26,35,48,0.45);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  z-index: 1;
-  pointer-events: none;
-}
-
-
+/* ── Drawer ── */
 .drawer-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  position: fixed; inset: 0;
   background: rgba(26,35,48,0.45);
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
   z-index: 400; display: flex; align-items: flex-end; justify-content: center;
@@ -429,9 +381,7 @@ main { flex: 1; padding: 16px 16px 0; }
 
 /* ── Modal ── */
 .modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(26,35,48,0.45);
+  position: fixed; inset: 0; background: rgba(26,35,48,0.45);
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
   z-index: 200; display: flex; align-items: flex-end; justify-content: center;
   opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
@@ -625,13 +575,10 @@ main { flex: 1; padding: 16px 16px 0; }
 
 /* ── Shortcuts modal ── */
 .shortcuts-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(26,35,48,0.45);
+  position: fixed; inset: 0; background: rgba(26,35,48,0.45);
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   z-index: 300; display: flex; align-items: center; justify-content: center;
-  padding: calc(env(safe-area-inset-top, 0px) + 24px) 24px 24px;
-  opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
 }
 .shortcuts-overlay.open { opacity: 1; pointer-events: all; }
 .shortcuts-card {
@@ -656,13 +603,10 @@ kbd { font-family: var(--font-body); font-size: 13px; font-weight: 700; color: v
 
 /* ── About modal ── */
 .about-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(26,35,48,0.45);
+  position: fixed; inset: 0; background: rgba(26,35,48,0.45);
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   z-index: 300; display: flex; align-items: center; justify-content: center;
-  padding: calc(env(safe-area-inset-top, 0px) + 24px) 24px 24px;
-  opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
 }
 .about-overlay.open { opacity: 1; pointer-events: all; }
 .about-card {
