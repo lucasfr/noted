@@ -115,10 +115,11 @@ header {
 /* ── Drawer ── */
 .drawer-overlay {
   position: fixed; inset: 0;
-  background: transparent;
+  background: rgba(232,237,242,0.97);
   z-index: 400; display: flex; align-items: flex-end; justify-content: center;
   visibility: hidden; opacity: 0; transition: opacity 0.25s ease, visibility 0.25s ease;
 }
+[data-theme="dark"] .drawer-overlay { background: rgba(26,35,48,0.97); }
 .drawer-overlay.open { visibility: visible; opacity: 1; }
 .drawer {
   background: rgba(244,246,248,0.72); border: 1px solid var(--glass-border);
@@ -380,10 +381,11 @@ main { flex: 1; padding: 16px 16px 0; }
 
 /* ── Modal ── */
 .modal-overlay {
-  position: fixed; inset: 0; background: transparent;
+  position: fixed; inset: 0; background: rgba(232,237,242,0.97);
   z-index: 200; display: flex; align-items: flex-end; justify-content: center;
   opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
 }
+[data-theme="dark"] .modal-overlay { background: rgba(26,35,48,0.97); }
 .modal-overlay.open { opacity: 1; pointer-events: all; }
 .modal {
   background: rgba(244,246,248,0.72); border: 1px solid var(--glass-border);
@@ -573,10 +575,11 @@ main { flex: 1; padding: 16px 16px 0; }
 
 /* ── Shortcuts modal ── */
 .shortcuts-overlay {
-  position: fixed; inset: 0; background: transparent;
+  position: fixed; inset: 0; background: rgba(232,237,242,0.97);
   z-index: 300; display: flex; align-items: center; justify-content: center;
   padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
 }
+[data-theme="dark"] .shortcuts-overlay { background: rgba(26,35,48,0.97); }
 .shortcuts-overlay.open { opacity: 1; pointer-events: all; }
 .shortcuts-card {
   background: var(--modal-bg); border: 1px solid var(--glass-border);
@@ -600,10 +603,11 @@ kbd { font-family: var(--font-body); font-size: 13px; font-weight: 700; color: v
 
 /* ── About modal ── */
 .about-overlay {
-  position: fixed; inset: 0; background: transparent;
+  position: fixed; inset: 0; background: rgba(232,237,242,0.97);
   z-index: 300; display: flex; align-items: center; justify-content: center;
   padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
 }
+[data-theme="dark"] .about-overlay { background: rgba(26,35,48,0.97); }
 .about-overlay.open { opacity: 1; pointer-events: all; }
 .about-card {
   background: rgba(244,246,248,0.72); border: 1px solid var(--glass-border);
