@@ -115,8 +115,7 @@ header {
 /* ── Drawer ── */
 .drawer-overlay {
   position: fixed; inset: 0;
-  background: rgba(26,35,48,0.45);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  background: transparent;
   z-index: 400; display: flex; align-items: flex-end; justify-content: center;
   visibility: hidden; opacity: 0; transition: opacity 0.25s ease, visibility 0.25s ease;
 }
@@ -381,8 +380,7 @@ main { flex: 1; padding: 16px 16px 0; }
 
 /* ── Modal ── */
 .modal-overlay {
-  position: fixed; inset: 0; background: rgba(26,35,48,0.45);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  position: fixed; inset: 0; background: transparent;
   z-index: 200; display: flex; align-items: flex-end; justify-content: center;
   opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
 }
@@ -575,8 +573,7 @@ main { flex: 1; padding: 16px 16px 0; }
 
 /* ── Shortcuts modal ── */
 .shortcuts-overlay {
-  position: fixed; inset: 0; background: rgba(26,35,48,0.45);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  position: fixed; inset: 0; background: transparent;
   z-index: 300; display: flex; align-items: center; justify-content: center;
   padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
 }
@@ -603,8 +600,7 @@ kbd { font-family: var(--font-body); font-size: 13px; font-weight: 700; color: v
 
 /* ── About modal ── */
 .about-overlay {
-  position: fixed; inset: 0; background: rgba(26,35,48,0.45);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  position: fixed; inset: 0; background: transparent;
   z-index: 300; display: flex; align-items: center; justify-content: center;
   padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
 }
