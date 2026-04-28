@@ -475,6 +475,25 @@ document.getElementById('header-date').textContent = new Date().toLocaleDateStri
   weekday: 'short', day: 'numeric', month: 'short',
 });
 
+// ── Overlay safe-area cap ─────────────────────────────────────────────────────
+const safeAreaCap = document.getElementById('overlay-safe-area');
+const overlayIds  = ['drawer-overlay','modal-overlay','about-overlay','shortcuts-overlay','onboarding-overlay'];
+
+function updateSafeAreaCap() {
+  const anyOpen = overlayIds.some(id => {
+    const el = document.getElementById(id);
+    return el && (el.classList.contains('open') ||
+      (el.style.opacity !== '' && el.style.opacity !== '0'));
+  });
+  safeAreaCap.classList.toggle('visible', anyOpen);
+}
+
+const capObserver = new MutationObserver(updateSafeAreaCap);
+overlayIds.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) capObserver.observe(el, { attributes: true, attributeFilter: ['class', 'style'] });
+});
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 load();
 if (privacyOn) entries.forEach(e => blurredIds.add(e.id));
