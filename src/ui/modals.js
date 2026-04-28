@@ -2,6 +2,10 @@ import { entries, setEntries, save } from '../storage.js';
 import { fmtTime, dayKey, fmtDay, getTags } from '../render.js';
 
 // ── Shared helpers ────────────────────────────────────────────────────────────
+const safeAreaCap = () => document.getElementById('overlay-safe-area');
+export const showCap = () => safeAreaCap()?.classList.add('visible');
+export const hideCap = () => safeAreaCap()?.classList.remove('visible');
+
 function closeOnBackdrop(overlay, cls) {
   overlay.addEventListener('click', e => {
     if (e.target === overlay) overlay.classList.remove(cls);
@@ -96,10 +100,10 @@ export function initExportModal({ render }) {
 
   document.getElementById('export-btn').addEventListener('click', () => {
     document.getElementById('export-preview').textContent = JSON.stringify(buildExport(), null, 2);
-    overlay.classList.add('open');
+    overlay.classList.add('open'); showCap();
   });
 
-  document.getElementById('modal-close').addEventListener('click', () => overlay.classList.remove('open'));
+  document.getElementById('modal-close').addEventListener('click', () => { overlay.classList.remove('open'); hideCap(); });
   closeOnBackdrop(overlay, 'open');
 
   document.getElementById('modal-copy').addEventListener('click', () => {
@@ -171,8 +175,8 @@ export function initExportModal({ render }) {
 // ── Shortcuts modal ──────────────────────────────────────────────────────────
 export function initShortcutsModal() {
   const overlay = document.getElementById('shortcuts-overlay');
-  document.getElementById('shortcuts-btn').addEventListener('click', () => overlay.classList.toggle('open'));
-  document.getElementById('shortcuts-close').addEventListener('click', () => overlay.classList.remove('open'));
+  document.getElementById('shortcuts-btn').addEventListener('click', () => { overlay.classList.toggle('open'); overlay.classList.contains('open') ? showCap() : hideCap(); });
+  document.getElementById('shortcuts-close').addEventListener('click', () => { overlay.classList.remove('open'); hideCap(); });
   closeOnBackdrop(overlay, 'open');
   return overlay;
 }
@@ -180,8 +184,8 @@ export function initShortcutsModal() {
 // ── About modal ──────────────────────────────────────────────────────────────
 export function initAboutModal() {
   const overlay = document.getElementById('about-overlay');
-  document.getElementById('logo-btn').addEventListener('click', () => overlay.classList.add('open'));
-  document.getElementById('about-close').addEventListener('click', () => overlay.classList.remove('open'));
+  document.getElementById('logo-btn').addEventListener('click', () => { overlay.classList.add('open'); showCap(); });
+  document.getElementById('about-close').addEventListener('click', () => { overlay.classList.remove('open'); hideCap(); });
   closeOnBackdrop(overlay, 'open');
   return overlay;
 }
