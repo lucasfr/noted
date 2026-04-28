@@ -71,7 +71,11 @@ html, body {
   background-image: radial-gradient(circle, rgba(84,122,149,0.35) 1px, transparent 1px);
 }
 
-body { display: flex; flex-direction: column; min-height: 100dvh; overflow-y: auto; }
+body {
+  display: flex; flex-direction: column; min-height: 100dvh; overflow-y: auto;
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  overflow-y: auto;
+}
 
 /* ── Full-width layout ── */
 header, main, .input-area { width: 100%; }
