@@ -208,7 +208,7 @@ header {
 #search-close svg { width: 18px; height: 18px; }
 
 /* ── Entries ── */
-main { flex: 1; padding: 16px 16px 0; }
+main { flex: 1; padding: 16px 16px 0; min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 34px) - 200px); }
 
 .day-label {
   font-family: var(--font-body); font-size: 15px; font-weight: 600;
