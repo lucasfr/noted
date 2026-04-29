@@ -120,10 +120,21 @@ export function initSyncModal({ renderFn }) {
   const lastSyncEl = document.getElementById('sync-last-sync-display');
   const saveBtn    = document.getElementById('sync-save-btn');
 
+  function isConnected() {
+    return !!(localStorage.getItem(SYNC_TOKEN_KEY) && localStorage.getItem(SYNC_REPO_KEY));
+  }
+
+  function updateGating() {
+    const connected = isConnected();
+    document.getElementById('sync-pull-btn').disabled       = !connected;
+    document.getElementById('sync-disconnect-btn').disabled = !connected;
+  }
+
   function openModal() {
     tokenInput.value       = localStorage.getItem(SYNC_TOKEN_KEY) || '';
     repoInput.value        = localStorage.getItem(SYNC_REPO_KEY) || '';
     lastSyncEl.textContent = fmtLastSync();
+    updateGating();
     overlay.classList.add('open');
   }
   function closeModal() { overlay.classList.remove('open'); }
@@ -175,6 +186,7 @@ export function initSyncModal({ renderFn }) {
     }
     setSyncStatus(result.ok ? 'ok' : 'error');
     if (!result.ok) showToast(`Sync failed: ${result.reason}`);
+    updateGating();
   });
 
   document.getElementById('sync-pull-btn').addEventListener('click', async () => {
@@ -191,6 +203,7 @@ export function initSyncModal({ renderFn }) {
     closeModal();
     setSyncStatus('idle');
     showToast('Sync disconnected');
+    updateGating();
   });
 
   setSyncStatus(localStorage.getItem(SYNC_TOKEN_KEY) ? 'ok' : 'idle');
