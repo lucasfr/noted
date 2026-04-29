@@ -19,6 +19,9 @@ html = html.replace(
         background: #E8EDF2;
         margin: 0;
         padding: 0;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
     }
     @media (prefers-color-scheme: dark) {
         html, body { background: #1A2330; }
@@ -29,6 +32,7 @@ html = html.replace(
             height: 100vh !important;
             max-width: none !important;
             overflow: hidden;
+            position: fixed;
             box-sizing: border-box;
         }
         #root {
@@ -44,7 +48,7 @@ html = html.replace(
     <style id="expo-reset">
     #root, body, html { height: 100%; }
     body { overflow: hidden; }
-    #root { display: flex; }
+    #root { display: flex; position: fixed; top: 0; left: 0; right: 0; bottom: 0; }
     </style>`
 );
 

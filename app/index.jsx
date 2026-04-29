@@ -105,7 +105,6 @@ export default function Shell() {
   return (
     <View style={[s.root, { backgroundColor: c.bg }]} onStartShouldSetResponder={() => { collapseRef.current?.(); return false; }}>
       <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
-      <DotGrid color={c.dot} bgColor={c.bg} />
 
       <Header
         c={c}
