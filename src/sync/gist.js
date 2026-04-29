@@ -93,12 +93,43 @@ export async function pullFromGist() {
   }
 }
 
-// ── Merge (union by id, remote wins on conflict) ──────────────────────────────
+// ── Merge: union by id, newer updatedAt wins on conflict ────────────────────
+// Falls back to timestamp for entries created before updatedAt was introduced.
 export function mergeEntries(local, remote) {
   const map = new Map();
+
+  // Seed with local
   local.forEach(e => map.set(e.id, e));
-  remote.forEach(e => map.set(e.id, e));
+
+  // Remote: only overwrites if it's newer (or local has no updatedAt)
+  remote.forEach(e => {
+    const existing = map.get(e.id);
+    if (!existing) {
+      map.set(e.id, e);
+    } else {
+      const localTs  = existing.updatedAt  || existing.timestamp;
+      const remoteTs = e.updatedAt         || e.timestamp;
+      if (remoteTs > localTs) map.set(e.id, e);
+    }
+  });
+
   return Array.from(map.values()).sort((a, b) => a.timestamp - b.timestamp);
+}
+
+// ── First-connect sync: pull → merge → push ───────────────────────────────────
+// Used when the user first configures sync on a device that already has entries.
+// Ensures no data is lost in either direction.
+export async function syncOnConnect(localEntries) {
+  const pullResult = await pullFromGist();
+
+  // If repo is empty (first ever device), just push
+  if (!pullResult.ok) {
+    return pushToGist(localEntries);
+  }
+
+  // Merge both sides and push the result
+  const merged = mergeEntries(localEntries, pullResult.entries);
+  return { ...(await pushToGist(merged)), merged };
 }
 
 // ── Validate token has repo scope ─────────────────────────────────────────────

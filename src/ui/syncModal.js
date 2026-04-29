@@ -1,6 +1,6 @@
 import {
   SYNC_TOKEN_KEY, SYNC_REPO_KEY, SYNC_LAST_SYNC_KEY,
-  validateToken, pushToGist, pullFromGist, mergeEntries, fmtLastSync,
+  validateToken, pushToGist, pullFromGist, mergeEntries, fmtLastSync, syncOnConnect,
 } from '../sync/gist.js';
 import { entries, setEntries, save } from '../storage.js';
 import { showToast } from './modals.js';
@@ -162,9 +162,19 @@ export function initSyncModal({ renderFn }) {
     closeModal();
     showToast('Sync connected ✓');
     setSyncStatus('syncing');
-    const result = await pushToGist(entries);
+    const result = await syncOnConnect(entries);
+    if (result.ok) {
+      if (result.merged) {
+        setEntries(result.merged);
+        save(showToast);
+        renderFn();
+        showToast(`Merged & synced — ${result.merged.length} entries ✓`);
+      } else {
+        showToast('First sync complete ✓');
+      }
+    }
     setSyncStatus(result.ok ? 'ok' : 'error');
-    if (result.ok) showToast('First sync complete ✓');
+    if (!result.ok) showToast(`Sync failed: ${result.reason}`);
   });
 
   document.getElementById('sync-pull-btn').addEventListener('click', async () => {

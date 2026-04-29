@@ -278,7 +278,7 @@ function commitEdit(id) {
   const newType = el.dataset.editType;
   if (newText) {
     const idx = entries.findIndex(e => e.id === id);
-    if (idx !== -1) { entries[idx].text = newText; entries[idx].type = newType; save(showToast); }
+    if (idx !== -1) { entries[idx].text = newText; entries[idx].type = newType; entries[idx].updatedAt = Date.now(); save(showToast); }
   }
   editingId = null;
   doRender();
@@ -294,7 +294,7 @@ function addEntry(text) {
   text = text.trim();
   if (!text) return;
   if (navigator.vibrate) navigator.vibrate(8);
-  entries.push({ id: crypto.randomUUID(), timestamp: Date.now(), type: selectedType, text });
+  entries.push({ id: crypto.randomUUID(), timestamp: Date.now(), updatedAt: Date.now(), type: selectedType, text });
   save(showToast);
   doRender({ scrollToNew: true });
   if (privacyOn) scheduleBlur(entries[entries.length - 1].id);
@@ -305,6 +305,7 @@ function toggleDone(id) {
   if (idx === -1) return;
   entries[idx].done = !entries[idx].done;
   entries[idx].doneAt = entries[idx].done ? Date.now() : null;
+  entries[idx].updatedAt = Date.now();
   if (navigator.vibrate) navigator.vibrate(6);
   save(showToast);
   doRender();
