@@ -452,6 +452,7 @@ document.addEventListener('keydown', e => {
     if (document.getElementById('onboarding-overlay').classList.contains('open')) { document.getElementById('ob-skip').click(); return; }
     if (document.getElementById('about-overlay').classList.contains('open'))      { document.getElementById('about-close').click(); return; }
     if (document.getElementById('modal-overlay').classList.contains('open'))      { document.getElementById('modal-close').click(); return; }
+    if (document.getElementById('sync-overlay').classList.contains('open'))       { document.getElementById('sync-close').click(); return; }
     if (document.getElementById('drawer-overlay').classList.contains('open'))     { drawerOverlay.classList.remove('open'); return; }
     if (editingId) { cancelEdit(editingId); return; }
   }
@@ -465,6 +466,7 @@ document.addEventListener('keydown', e => {
   if (mod && e.key === 'e') { e.preventDefault(); document.getElementById('export-btn').click(); }
   if (mod && e.key === '/') { e.preventDefault(); textarea.focus(); }
   if (mod && e.key === 'm') { e.preventDefault(); document.getElementById('mic-btn').click(); }
+  if (mod && e.key === 's') { e.preventDefault(); document.getElementById('sync-btn').click(); }
   if (mod && e.key === 'i') { e.preventDefault(); document.getElementById('logo-btn').click(); }
 
   if (e.key === '1') { e.preventDefault(); document.querySelector('.type-btn[data-type="note"]').click();  textarea.focus(); }
