@@ -1,6 +1,7 @@
 import './style.css';
 
-import { entries, setEntries, load, save, THEME_KEY, PRIVACY_KEY, SORT_KEY, BLUR_DELAY_KEY, SYMBOLS } from './storage.js';
+import { entries, setEntries, load, save, setOnSaveHook, THEME_KEY, PRIVACY_KEY, SORT_KEY, BLUR_DELAY_KEY, SYMBOLS } from './storage.js';
+import { initSyncModal, setSyncStatus, scheduleSyncAfterSave } from './ui/syncModal.js';
 import { render, dayKey, fmtDay } from './render.js';
 import { initSwipe }       from './ui/swipe.js';
 import { initSpeech }      from './ui/speech.js';
@@ -436,6 +437,8 @@ initExportModal({ render: doRender });
 initClearBtn({ render: doRender });
 initOnboarding();
 initSpeech({ getTextarea: () => textarea, showToast });
+initSyncModal({ renderFn: doRender });
+setOnSaveHook(scheduleSyncAfterSave);
 
 // ── Keyboard shortcuts ────────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
