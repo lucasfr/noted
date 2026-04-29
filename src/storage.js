@@ -7,6 +7,9 @@ export const SYMBOLS      = { note: '♣', task: '♠', event: '♥', idea: '♦
 
 export let entries = [];
 
+let onSaveHook = null;
+export function setOnSaveHook(fn) { onSaveHook = fn; }
+
 export function load() {
   try { entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
   catch { entries = []; }
@@ -15,6 +18,7 @@ export function load() {
 export function save(showToast) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    onSaveHook?.();
   } catch {
     showToast('Storage full — oldest entries may not be saved');
   }
