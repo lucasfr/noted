@@ -1,5 +1,5 @@
 import {
-  GIST_TOKEN_KEY, GIST_ID_KEY, GIST_LAST_SYNC_KEY,
+  SYNC_TOKEN_KEY, SYNC_REPO_KEY, SYNC_LAST_SYNC_KEY,
   validateToken, pushToGist, pullFromGist, mergeEntries, fmtLastSync,
 } from '../sync/gist.js';
 import { entries, setEntries, save } from '../storage.js';
@@ -21,7 +21,7 @@ export function setSyncStatus(state) {
 // ── Auto-sync hook (called from storage.save) ─────────────────────────────────
 let syncTimeout = null;
 export function scheduleSyncAfterSave() {
-  if (!localStorage.getItem(GIST_TOKEN_KEY)) return;
+  if (!localStorage.getItem(SYNC_TOKEN_KEY)) return;
   clearTimeout(syncTimeout);
   syncTimeout = setTimeout(async () => {
     setSyncStatus('syncing');
@@ -33,7 +33,7 @@ export function scheduleSyncAfterSave() {
 
 // ── Manual pull ───────────────────────────────────────────────────────────────
 async function pullAndMerge(renderFn) {
-  if (!localStorage.getItem(GIST_TOKEN_KEY)) { showToast('Configure sync first'); return; }
+  if (!localStorage.getItem(SYNC_TOKEN_KEY)) { showToast('Configure sync first'); return; }
   setSyncStatus('syncing');
   const result = await pullFromGist();
   if (!result.ok) { setSyncStatus('error'); showToast(`Sync failed: ${result.reason}`); return; }
@@ -60,7 +60,7 @@ function injectHTML() {
 
       <div class="sync-section">
         <p class="sync-desc">
-          Your entries sync to a private GitHub Gist — only you can see it.
+          Your entries sync to a private GitHub repository — only you can see it.
           Any device with the same token stays in sync automatically.
         </p>
         <label class="sync-label" for="sync-token-input">Personal Access Token</label>
@@ -72,15 +72,17 @@ function injectHTML() {
         </div>
         <p class="sync-hint">
           Generate at <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener">github.com/settings/tokens</a>
-          with the <strong>gist</strong> scope. Classic tokens work fine.
+          with the <strong>repo</strong> scope. Classic tokens work fine.
         </p>
       </div>
 
       <div class="sync-section">
-        <label class="sync-label">Gist ID <span class="sync-optional">(auto-created on first save)</span></label>
-        <input id="sync-gist-id-input" type="text" class="sync-input"
-          placeholder="Will be filled automatically" autocomplete="off"/>
-        <p class="sync-hint">Already have a Noted gist? Paste its ID here to link it.</p>
+        <label class="sync-label">Private repository</label>
+        <input id="sync-repo-input" type="text" class="sync-input"
+          placeholder="username/repo-name" autocomplete="off" spellcheck="false"/>
+        <p class="sync-hint">
+          Create a private repo on GitHub first, then paste its name here (e.g. <strong>lucasfr/noted-sync</strong>).
+        </p>
       </div>
 
       <div class="sync-status-row">
@@ -90,7 +92,7 @@ function injectHTML() {
 
       <div class="sync-actions">
         <button class="sync-btn sync-btn-primary"   id="sync-save-btn">Save &amp; connect</button>
-        <button class="sync-btn sync-btn-secondary" id="sync-pull-btn">⬇ Pull from Gist</button>
+        <button class="sync-btn sync-btn-secondary" id="sync-pull-btn">⬇ Pull from repo</button>
         <button class="sync-btn sync-btn-danger"    id="sync-disconnect-btn">Disconnect</button>
       </div>
     </div>`;
@@ -101,15 +103,15 @@ function injectHTML() {
 export function initSyncModal({ renderFn }) {
   injectHTML();
 
-  const overlay       = document.getElementById('sync-overlay');
-  const tokenInput    = document.getElementById('sync-token-input');
-  const gistIdInput   = document.getElementById('sync-gist-id-input');
-  const lastSyncEl    = document.getElementById('sync-last-sync-display');
-  const saveBtn       = document.getElementById('sync-save-btn');
+  const overlay    = document.getElementById('sync-overlay');
+  const tokenInput = document.getElementById('sync-token-input');
+  const repoInput  = document.getElementById('sync-repo-input');
+  const lastSyncEl = document.getElementById('sync-last-sync-display');
+  const saveBtn    = document.getElementById('sync-save-btn');
 
   function openModal() {
-    tokenInput.value       = localStorage.getItem(GIST_TOKEN_KEY) || '';
-    gistIdInput.value      = localStorage.getItem(GIST_ID_KEY) || '';
+    tokenInput.value       = localStorage.getItem(SYNC_TOKEN_KEY) || '';
+    repoInput.value        = localStorage.getItem(SYNC_REPO_KEY) || '';
     lastSyncEl.textContent = fmtLastSync();
     overlay.classList.add('open');
   }
@@ -129,21 +131,22 @@ export function initSyncModal({ renderFn }) {
   });
 
   saveBtn.addEventListener('click', async () => {
-    const token  = tokenInput.value.trim();
-    const gistId = gistIdInput.value.trim();
+    const token = tokenInput.value.trim();
+    const repo  = repoInput.value.trim();
     if (!token) { showToast('Enter a token first'); return; }
+    if (!repo)  { showToast('Enter a repository name'); return; }
+    if (!repo.includes('/')) { showToast('Format: username/repo-name'); return; }
 
-    saveBtn.disabled = true;
+    saveBtn.disabled    = true;
     saveBtn.textContent = 'Validating…';
-    const valid = await validateToken(token);
-    saveBtn.disabled = false;
+    const valid = await validateToken(token, repo);
+    saveBtn.disabled    = false;
     saveBtn.textContent = 'Save & connect';
 
-    if (!valid.ok) { showToast(`Token error: ${valid.reason}`); return; }
+    if (!valid.ok) { showToast(valid.reason); return; }
 
-    localStorage.setItem(GIST_TOKEN_KEY, token);
-    if (gistId) localStorage.setItem(GIST_ID_KEY, gistId);
-    else        localStorage.removeItem(GIST_ID_KEY);
+    localStorage.setItem(SYNC_TOKEN_KEY, token);
+    localStorage.setItem(SYNC_REPO_KEY, repo);
 
     closeModal();
     showToast('Sync connected ✓');
@@ -159,15 +162,15 @@ export function initSyncModal({ renderFn }) {
   });
 
   document.getElementById('sync-disconnect-btn').addEventListener('click', () => {
-    localStorage.removeItem(GIST_TOKEN_KEY);
-    localStorage.removeItem(GIST_ID_KEY);
-    localStorage.removeItem(GIST_LAST_SYNC_KEY);
-    tokenInput.value  = '';
-    gistIdInput.value = '';
+    localStorage.removeItem(SYNC_TOKEN_KEY);
+    localStorage.removeItem(SYNC_REPO_KEY);
+    localStorage.removeItem(SYNC_LAST_SYNC_KEY);
+    tokenInput.value = '';
+    repoInput.value  = '';
     closeModal();
     setSyncStatus('idle');
     showToast('Sync disconnected');
   });
 
-  setSyncStatus(localStorage.getItem(GIST_TOKEN_KEY) ? 'ok' : 'idle');
+  setSyncStatus(localStorage.getItem(SYNC_TOKEN_KEY) ? 'ok' : 'idle');
 }

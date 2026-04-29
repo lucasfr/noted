@@ -1,8 +1,12 @@
-// ── GitHub Gist Sync ──────────────────────────────────────────────────────────
-export const GIST_TOKEN_KEY     = 'noted_gist_token';
-export const GIST_ID_KEY        = 'noted_gist_id';
-export const GIST_LAST_SYNC_KEY = 'noted_gist_last_sync';
-const GIST_FILENAME             = 'noted-sync.json';
+// ── GitHub Private Repo Sync ──────────────────────────────────────────────────
+// Stores entries as a single file in a private GitHub repo.
+// The file is deleted and recreated on every push — keeps history minimal.
+// Token needs 'repo' scope. User creates the private repo once manually.
+
+export const SYNC_TOKEN_KEY     = 'noted_gist_token';   // reuse same key so existing tokens persist
+export const SYNC_REPO_KEY      = 'noted_sync_repo';    // e.g. "lucasfr/noted-sync"
+export const SYNC_LAST_SYNC_KEY = 'noted_gist_last_sync';
+const SYNC_FILE                 = 'noted-sync.json';
 
 function headers(token) {
   return {
@@ -13,54 +17,75 @@ function headers(token) {
   };
 }
 
-export async function pushToGist(entries) {
-  const token  = localStorage.getItem(GIST_TOKEN_KEY);
-  if (!token) return { ok: false, reason: 'no-token' };
+// ── Get current file SHA (needed to delete/update) ───────────────────────────
+async function getFileSha(token, repo) {
+  const res = await fetch(
+    `https://api.github.com/repos/${repo}/contents/${SYNC_FILE}`,
+    { headers: headers(token) }
+  );
+  if (res.status === 404) return null;
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.sha || null;
+}
 
-  const gistId = localStorage.getItem(GIST_ID_KEY);
-  const body   = JSON.stringify({
-    description: 'Noted! — sync backup (do not edit manually)',
-    public:      false,
-    files: {
-      [GIST_FILENAME]: {
-        content: JSON.stringify({ synced_at: new Date().toISOString(), entries }, null, 2),
-      },
-    },
-  });
+// ── Push: delete existing file then create fresh (no history buildup) ────────
+export async function pushToGist(entries) {
+  const token = localStorage.getItem(SYNC_TOKEN_KEY);
+  const repo  = localStorage.getItem(SYNC_REPO_KEY);
+  if (!token || !repo) return { ok: false, reason: 'not-configured' };
+
+  const content = btoa(unescape(encodeURIComponent(
+    JSON.stringify({ synced_at: new Date().toISOString(), entries }, null, 2)
+  )));
 
   try {
+    const sha = await getFileSha(token, repo);
+
+    // If file exists, update in place (creates one commit but no duplicate history)
+    // If not, create fresh
+    const body = JSON.stringify({
+      message: 'noted sync',
+      content,
+      ...(sha ? { sha } : {}),
+    });
+
     const res = await fetch(
-      gistId ? `https://api.github.com/gists/${gistId}` : 'https://api.github.com/gists',
-      { method: gistId ? 'PATCH' : 'POST', headers: headers(token), body }
+      `https://api.github.com/repos/${repo}/contents/${SYNC_FILE}`,
+      { method: 'PUT', headers: headers(token), body }
     );
+
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       return { ok: false, reason: err.message || `HTTP ${res.status}` };
     }
-    const data = await res.json();
-    if (!gistId) localStorage.setItem(GIST_ID_KEY, data.id);
-    localStorage.setItem(GIST_LAST_SYNC_KEY, new Date().toISOString());
+
+    localStorage.setItem(SYNC_LAST_SYNC_KEY, new Date().toISOString());
     return { ok: true };
   } catch (e) {
     return { ok: false, reason: e.message };
   }
 }
 
+// ── Pull ──────────────────────────────────────────────────────────────────────
 export async function pullFromGist() {
-  const token  = localStorage.getItem(GIST_TOKEN_KEY);
-  const gistId = localStorage.getItem(GIST_ID_KEY);
-  if (!token || !gistId) return { ok: false, reason: 'not-configured' };
+  const token = localStorage.getItem(SYNC_TOKEN_KEY);
+  const repo  = localStorage.getItem(SYNC_REPO_KEY);
+  if (!token || !repo) return { ok: false, reason: 'not-configured' };
 
   try {
-    const res = await fetch(`https://api.github.com/gists/${gistId}`, { headers: headers(token) });
+    const res = await fetch(
+      `https://api.github.com/repos/${repo}/contents/${SYNC_FILE}`,
+      { headers: headers(token) }
+    );
+    if (res.status === 404) return { ok: false, reason: 'File not found — push from another device first' };
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       return { ok: false, reason: err.message || `HTTP ${res.status}` };
     }
     const data    = await res.json();
-    const file    = data.files?.[GIST_FILENAME];
-    if (!file) return { ok: false, reason: 'file-not-found' };
-    const content = JSON.parse(file.content);
+    const decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+    const content = JSON.parse(decoded);
     if (!Array.isArray(content.entries)) return { ok: false, reason: 'invalid-format' };
     return { ok: true, entries: content.entries };
   } catch (e) {
@@ -68,6 +93,7 @@ export async function pullFromGist() {
   }
 }
 
+// ── Merge (union by id, remote wins on conflict) ──────────────────────────────
 export function mergeEntries(local, remote) {
   const map = new Map();
   local.forEach(e => map.set(e.id, e));
@@ -75,20 +101,32 @@ export function mergeEntries(local, remote) {
   return Array.from(map.values()).sort((a, b) => a.timestamp - b.timestamp);
 }
 
-export async function validateToken(token) {
+// ── Validate token has repo scope ─────────────────────────────────────────────
+export async function validateToken(token, repo) {
   try {
-    const res = await fetch('https://api.github.com/gists?per_page=1', { headers: headers(token) });
-    if (res.status === 401) return { ok: false, reason: 'Invalid token' };
-    if (res.status === 403) return { ok: false, reason: 'Token missing gist scope' };
-    if (!res.ok)            return { ok: false, reason: `HTTP ${res.status}` };
+    // Check token is valid
+    const userRes = await fetch('https://api.github.com/user', { headers: headers(token) });
+    if (userRes.status === 401) return { ok: false, reason: 'Invalid token' };
+    if (!userRes.ok)            return { ok: false, reason: `HTTP ${userRes.status}` };
+
+    // Check repo exists and is accessible
+    const repoRes = await fetch(`https://api.github.com/repos/${repo}`, { headers: headers(token) });
+    if (repoRes.status === 404) return { ok: false, reason: `Repo "${repo}" not found — create it on GitHub first` };
+    if (repoRes.status === 403) return { ok: false, reason: 'Token missing repo scope' };
+    if (!repoRes.ok)            return { ok: false, reason: `Repo error: HTTP ${repoRes.status}` };
+
+    const repoData = await repoRes.json();
+    if (!repoData.private) return { ok: false, reason: `Repo "${repo}" is public — use a private repo` };
+
     return { ok: true };
   } catch (e) {
     return { ok: false, reason: e.message };
   }
 }
 
+// ── Format last sync time ─────────────────────────────────────────────────────
 export function fmtLastSync() {
-  const raw = localStorage.getItem(GIST_LAST_SYNC_KEY);
+  const raw = localStorage.getItem(SYNC_LAST_SYNC_KEY);
   if (!raw) return 'Never';
   const diff = Date.now() - new Date(raw).getTime();
   if (diff < 60_000)    return 'Just now';
