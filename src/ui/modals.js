@@ -85,7 +85,7 @@ function buildExport() {
   return {
     exported_at: new Date().toISOString(),
     app:         'noted',
-    version:     '1.0.0-beta1',
+    version:     '1.0.0-beta2',
     note:        'Export your entries and take them into your permanent notes app.',
     days,
   };

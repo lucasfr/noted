@@ -3,7 +3,7 @@
 **A privacy-first, offline PWA bullet journal for capturing timestamped thoughts, tasks, events and ideas.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0--beta1-blue)](https://github.com/lucasfr/noted/releases/tag/v1.0.0-beta1)
+[![Version](https://img.shields.io/badge/version-1.0.0--beta2-blue)](https://github.com/lucasfr/noted/releases/tag/v1.0.0-beta2)
 [![Changelog](https://img.shields.io/badge/changelog-📝-lightgrey)](./CHANGELOG.md)
 [![PWA](https://img.shields.io/badge/PWA-offline--ready-5A0FC8)](https://noted.lfranca.uk)
 [![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)](./vite.config.js)
@@ -19,7 +19,7 @@ When you're ready to move entries into your permanent notes app, export them as 
 
 ## ✨ Features
 
-- 🔒 **Privacy-first** — all data stays on-device in localStorage; nothing is transmitted or synced
+- 🔒 **Privacy-first** — all data stays on-device in localStorage; sync is opt-in via your own private GitHub repo
 - 🔇 **Privacy mode** — blur all entry text with a tap; auto-reveals on hover, auto-hides after 15 seconds
 - 📝 **Four entry types** — ♣ note, ♠ task, ♥ event, ♦ idea — each colour-coded with a left accent stripe
 - 🕐 **Automatic timestamps** on every entry, grouped by day, with per-day delete
@@ -29,9 +29,10 @@ When you're ready to move entries into your permanent notes app, export them as 
 - 🎙️ **Voice input** — Web Speech API for hands-free capture
 - ✅ **Task completion** — tap ○/✓ to mark tasks done with strikethrough; completion time recorded and displayed
 - 🏝️ **Floating input island** — collapses to a compact pill when inactive on both mobile and desktop
-- 🔍 **Search** — filter entries by text or #tag (⌘F); shows a “No results” state when empty
+- 🔍 **Search** — filter entries by text or #tag (⌘F); shows a "No results" state when empty
 - 📤 **JSON + Markdown export** — copy or download as JSON, or copy as Markdown
 - 📥 **JSON import** — restore entries from a backup file; duplicates are skipped automatically
+- ☁️ **GitHub sync** — opt-in sync to a private GitHub repo; auto-pushes on every save, pull on demand (⌘S to force sync)
 - 📱 **PWA** — installable on iOS, Android and desktop, works fully offline
 - 🍔 **Mobile-optimised** — hamburger menu with bottom drawer; shortcuts accessible via drawer
 - ⌨️ **Keyboard shortcuts** — press `?` on desktop for a full list
@@ -47,11 +48,14 @@ noted/
 │   ├── render.js           # Entry rendering and DOM updates
 │   ├── storage.js          # localStorage persistence
 │   ├── style.css           # Design system and styles
-│   └── ui/
-│       ├── modals.js       # Export, import and about modals
-│       ├── onboarding.js   # First-launch guided walkthrough
-│       ├── speech.js       # Voice input (Web Speech API)
-│       └── swipe.js        # Swipe-to-reveal gesture handler
+│   ├── ui/
+│   │   ├── modals.js       # Export, import and about modals
+│   │   ├── onboarding.js   # First-launch guided walkthrough
+│   │   ├── speech.js       # Voice input (Web Speech API)
+│   │   ├── swipe.js        # Swipe-to-reveal gesture handler
+│   │   └── syncModal.js    # GitHub sync settings and status
+│   └── sync/
+│       └── gist.js         # GitHub repository sync API
 ├── public/
 │   ├── favicon.svg
 │   ├── apple-touch-icon.png

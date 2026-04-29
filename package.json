@@ -1,6 +1,6 @@
 {
   "name": "noted",
-  "version": "1.0.0",
+  "version": "1.0.0-beta2",
   "description": "Minimal PWA bullet journal with Obsidian export",
   "private": true,
   "scripts": {
