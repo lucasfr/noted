@@ -61,7 +61,7 @@ export default function InputIsland({ c, theme, onSubmit, collapseRef }) {
   const islandBorder = theme === 'dark' ? 'rgba(126,184,212,0.20)' : c.glassBorder;
 
   return (
-    <View style={[s.outer, { paddingBottom: insets.bottom + 12 }]}>
+    <View style={s.outer}>
       <Animated.View style={[s.island, { backgroundColor: islandBg, borderColor: islandBorder, borderRadius }]}>
 
         {/* Type grid — only when expanded */}
