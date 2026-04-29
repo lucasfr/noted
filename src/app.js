@@ -1,7 +1,7 @@
 import './style.css';
 
 import { entries, setEntries, load, save, setOnSaveHook, THEME_KEY, PRIVACY_KEY, SORT_KEY, BLUR_DELAY_KEY, SYMBOLS } from './storage.js';
-import { initSyncModal, setSyncStatus, scheduleSyncAfterSave } from './ui/syncModal.js';
+import { initSyncModal, setSyncStatus, scheduleSyncAfterSave, forceSyncNow } from './ui/syncModal.js';
 import { render, dayKey, fmtDay } from './render.js';
 import { initSwipe }       from './ui/swipe.js';
 import { initSpeech }      from './ui/speech.js';
@@ -466,7 +466,7 @@ document.addEventListener('keydown', e => {
   if (mod && e.key === 'e') { e.preventDefault(); document.getElementById('export-btn').click(); }
   if (mod && e.key === '/') { e.preventDefault(); textarea.focus(); }
   if (mod && e.key === 'm') { e.preventDefault(); document.getElementById('mic-btn').click(); }
-  if (mod && e.key === 's') { e.preventDefault(); document.getElementById('sync-btn').click(); }
+  if (mod && e.key === 's') { e.preventDefault(); forceSyncNow(); }
   if (mod && e.key === 'i') { e.preventDefault(); document.getElementById('logo-btn').click(); }
 
   if (e.key === '1') { e.preventDefault(); document.querySelector('.type-btn[data-type="note"]').click();  textarea.focus(); }

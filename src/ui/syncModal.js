@@ -31,6 +31,17 @@ export function scheduleSyncAfterSave() {
   }, 800);
 }
 
+// ── Force immediate sync (⌘S) ─────────────────────────────────────────────────
+export async function forceSyncNow() {
+  if (!localStorage.getItem(SYNC_TOKEN_KEY)) { showToast('Sync not configured'); return; }
+  clearTimeout(syncTimeout);
+  setSyncStatus('syncing');
+  const result = await pushToGist(entries);
+  setSyncStatus(result.ok ? 'ok' : 'error');
+  if (result.ok) showToast('Synced ✓');
+  else showToast(`Sync failed: ${result.reason}`);
+}
+
 // ── Manual pull ───────────────────────────────────────────────────────────────
 async function pullAndMerge(renderFn) {
   if (!localStorage.getItem(SYNC_TOKEN_KEY)) { showToast('Configure sync first'); return; }
