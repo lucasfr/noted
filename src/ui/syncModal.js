@@ -103,6 +103,7 @@ function injectHTML() {
 
       <div class="sync-actions">
         <button class="sync-btn sync-btn-primary"   id="sync-save-btn">Save &amp; connect</button>
+        <button class="sync-btn sync-btn-secondary" id="sync-force-btn">↑ Force sync</button>
         <button class="sync-btn sync-btn-secondary" id="sync-pull-btn">⬇ Pull from repo</button>
         <button class="sync-btn sync-btn-danger"    id="sync-disconnect-btn">Disconnect</button>
       </div>
@@ -126,6 +127,7 @@ export function initSyncModal({ renderFn }) {
 
   function updateGating() {
     const connected = isConnected();
+    document.getElementById('sync-force-btn').disabled      = !connected;
     document.getElementById('sync-pull-btn').disabled       = !connected;
     document.getElementById('sync-disconnect-btn').disabled = !connected;
   }
@@ -139,22 +141,7 @@ export function initSyncModal({ renderFn }) {
   }
   function closeModal() { overlay.classList.remove('open'); }
 
-  // Click to open modal; long-press (500 ms) on mobile triggers force sync
-  const syncBtn = document.getElementById('sync-btn');
-  let syncLongPressTimer = null;
-  let syncLongPressFired = false;
-
-  syncBtn?.addEventListener('pointerdown', () => {
-    syncLongPressFired = false;
-    syncLongPressTimer = setTimeout(() => {
-      syncLongPressFired = true;
-      if (navigator.vibrate) navigator.vibrate(18);
-      forceSyncNow();
-    }, 500);
-  });
-  syncBtn?.addEventListener('pointerup',    () => clearTimeout(syncLongPressTimer));
-  syncBtn?.addEventListener('pointerleave', () => clearTimeout(syncLongPressTimer));
-  syncBtn?.addEventListener('click', () => { if (!syncLongPressFired) openModal(); });
+  document.getElementById('sync-btn')?.addEventListener('click', openModal);
   document.getElementById('drawer-sync-btn')?.addEventListener('click', () => {
     document.getElementById('drawer-overlay')?.classList.remove('open');
     openModal();
@@ -202,6 +189,11 @@ export function initSyncModal({ renderFn }) {
     setSyncStatus(result.ok ? 'ok' : 'error');
     if (!result.ok) showToast(`Sync failed: ${result.reason}`);
     updateGating();
+  });
+
+  document.getElementById('sync-force-btn').addEventListener('click', async () => {
+    closeModal();
+    await forceSyncNow();
   });
 
   document.getElementById('sync-pull-btn').addEventListener('click', async () => {
