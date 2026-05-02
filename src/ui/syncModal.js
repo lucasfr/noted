@@ -1,6 +1,6 @@
 import {
   SYNC_TOKEN_KEY, SYNC_REPO_KEY, SYNC_LAST_SYNC_KEY,
-  validateToken, pushToGist, pullFromGist, mergeEntries, fmtLastSync, syncOnConnect,
+  validateToken, pushToGist, pullFromGist, mergeEntries, fmtLastSync, syncOnConnect, pullOnStartup,
 } from '../sync/gist.js';
 import { entries, setEntries, save } from '../storage.js';
 import { showToast } from './modals.js';
@@ -214,4 +214,22 @@ export function initSyncModal({ renderFn }) {
   });
 
   setSyncStatus(localStorage.getItem(SYNC_TOKEN_KEY) ? 'ok' : 'idle');
+
+  // Auto-pull on startup: silently merge remote entries into local
+  if (localStorage.getItem(SYNC_TOKEN_KEY) && localStorage.getItem(SYNC_REPO_KEY)) {
+    setSyncStatus('syncing');
+    pullOnStartup(entries).then(result => {
+      if (result.ok) {
+        if (result.hasNew) {
+          setEntries(result.merged);
+          save(showToast);
+          renderFn();
+        }
+        setSyncStatus('ok');
+      } else {
+        setSyncStatus('error');
+        console.warn('[noted sync] startup pull failed:', result.reason);
+      }
+    });
+  }
 }

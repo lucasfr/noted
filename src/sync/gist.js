@@ -116,6 +116,28 @@ export function mergeEntries(local, remote) {
   return Array.from(map.values()).sort((a, b) => a.timestamp - b.timestamp);
 }
 
+// ── Startup sync: pull → merge → push (silent, runs on every app load) ─────────
+export async function pullOnStartup(localEntries) {
+  const token = localStorage.getItem(SYNC_TOKEN_KEY);
+  const repo  = localStorage.getItem(SYNC_REPO_KEY);
+  if (!token || !repo) return { ok: false, reason: 'not-configured' };
+
+  const pullResult = await pullFromGist();
+  if (!pullResult.ok) return { ok: false, reason: pullResult.reason };
+
+  const merged = mergeEntries(localEntries, pullResult.entries);
+
+  // Only push if merge added anything new from remote
+  const hasNew = merged.length !== localEntries.length ||
+    merged.some((e, i) => e.updatedAt !== localEntries[i]?.updatedAt);
+
+  if (hasNew) {
+    await pushToGist(merged);
+  }
+
+  return { ok: true, merged, hasNew };
+}
+
 // ── First-connect sync: pull → merge → push ───────────────────────────────────
 // Used when the user first configures sync on a device that already has entries.
 // Ensures no data is lost in either direction.
