@@ -29,21 +29,28 @@ async function getFileSha(token, repo) {
   return data.sha || null;
 }
 
-// ── Push: delete existing file then create fresh (no history buildup) ────────
-export async function pushToGist(entries) {
+// ── Push: pull → merge → write (prevents overwriting remote changes) ─────────
+export async function pushToGist(localEntries) {
   const token = localStorage.getItem(SYNC_TOKEN_KEY);
   const repo  = localStorage.getItem(SYNC_REPO_KEY);
   if (!token || !repo) return { ok: false, reason: 'not-configured' };
 
-  const content = btoa(unescape(encodeURIComponent(
-    JSON.stringify({ synced_at: new Date().toISOString(), entries }, null, 2)
-  )));
-
   try {
+    // Always pull first so we never clobber remote changes
     const sha = await getFileSha(token, repo);
+    let entriesToWrite = localEntries;
 
-    // If file exists, update in place (creates one commit but no duplicate history)
-    // If not, create fresh
+    if (sha) {
+      const pullResult = await pullFromGist();
+      if (pullResult.ok) {
+        entriesToWrite = mergeEntries(localEntries, pullResult.entries);
+      }
+    }
+
+    const content = btoa(unescape(encodeURIComponent(
+      JSON.stringify({ synced_at: new Date().toISOString(), entries: entriesToWrite }, null, 2)
+    )));
+
     const body = JSON.stringify({
       message: 'noted sync',
       content,
@@ -61,7 +68,7 @@ export async function pushToGist(entries) {
     }
 
     localStorage.setItem(SYNC_LAST_SYNC_KEY, new Date().toISOString());
-    return { ok: true };
+    return { ok: true, merged: entriesToWrite };
   } catch (e) {
     return { ok: false, reason: e.message };
   }

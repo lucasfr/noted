@@ -20,12 +20,19 @@ export function setSyncStatus(state) {
 
 // ── Auto-sync hook (called from storage.save) ─────────────────────────────────
 let syncTimeout = null;
+let _renderFn = null;
+
 export function scheduleSyncAfterSave() {
   if (!localStorage.getItem(SYNC_TOKEN_KEY)) return;
   clearTimeout(syncTimeout);
   syncTimeout = setTimeout(async () => {
     setSyncStatus('syncing');
     const result = await pushToGist(entries);
+    if (result.ok && result.merged && result.merged.length !== entries.length) {
+      setEntries(result.merged);
+      save(showToast);
+      _renderFn?.();
+    }
     setSyncStatus(result.ok ? 'ok' : 'error');
     if (!result.ok) console.warn('[noted sync] push failed:', result.reason);
   }, 800);
@@ -37,6 +44,11 @@ export async function forceSyncNow() {
   clearTimeout(syncTimeout);
   setSyncStatus('syncing');
   const result = await pushToGist(entries);
+  if (result.ok && result.merged && result.merged.length !== entries.length) {
+    setEntries(result.merged);
+    save(showToast);
+    _renderFn?.();
+  }
   setSyncStatus(result.ok ? 'ok' : 'error');
   if (result.ok) showToast('Synced ✓');
   else showToast(`Sync failed: ${result.reason}`);
@@ -113,6 +125,7 @@ function injectHTML() {
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 export function initSyncModal({ renderFn }) {
+  _renderFn = renderFn;
   injectHTML();
 
   const overlay    = document.getElementById('sync-overlay');
