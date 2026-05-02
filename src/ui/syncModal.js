@@ -139,7 +139,22 @@ export function initSyncModal({ renderFn }) {
   }
   function closeModal() { overlay.classList.remove('open'); }
 
-  document.getElementById('sync-btn')?.addEventListener('click', openModal);
+  // Click to open modal; long-press (500 ms) on mobile triggers force sync
+  const syncBtn = document.getElementById('sync-btn');
+  let syncLongPressTimer = null;
+  let syncLongPressFired = false;
+
+  syncBtn?.addEventListener('pointerdown', () => {
+    syncLongPressFired = false;
+    syncLongPressTimer = setTimeout(() => {
+      syncLongPressFired = true;
+      if (navigator.vibrate) navigator.vibrate(18);
+      forceSyncNow();
+    }, 500);
+  });
+  syncBtn?.addEventListener('pointerup',    () => clearTimeout(syncLongPressTimer));
+  syncBtn?.addEventListener('pointerleave', () => clearTimeout(syncLongPressTimer));
+  syncBtn?.addEventListener('click', () => { if (!syncLongPressFired) openModal(); });
   document.getElementById('drawer-sync-btn')?.addEventListener('click', () => {
     document.getElementById('drawer-overlay')?.classList.remove('open');
     openModal();
