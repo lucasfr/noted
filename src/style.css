@@ -300,6 +300,7 @@ main { flex: 1; padding: 16px 16px 0; }
   background: transparent;
 }
 .input-island {
+  position: relative;
   pointer-events: all;
   background: var(--bg);
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
@@ -751,3 +752,41 @@ kbd {
 .sync-btn-secondary:hover { background: var(--glass-hover); }
 .sync-btn-danger { background: transparent; color: #E05252; border: 1px solid #E05252; margin-left: auto; }
 .sync-btn-danger:hover { background: rgba(224,82,82,0.08); }
+
+/* ── Hashtag autocomplete dropdown ── */
+.hashtag-dropdown {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0; right: 0;
+  background: rgba(244,246,248,0.96);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 20px var(--shadow);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  list-style: none;
+  overflow: hidden;
+  z-index: 200;
+  margin: 0; padding: 4px 0;
+}
+[data-theme="dark"] .hashtag-dropdown {
+  background: rgba(26,35,48,0.96);
+}
+.hashtag-option {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--accent);
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.hashtag-option:hover,
+.hashtag-option.active {
+  background: var(--glass-hover);
+  color: var(--accent-dark);
+}
+[data-theme="dark"] .hashtag-option:hover,
+[data-theme="dark"] .hashtag-option.active {
+  color: var(--accent);
+  background: rgba(255,255,255,0.07);
+}

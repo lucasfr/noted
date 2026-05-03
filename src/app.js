@@ -5,6 +5,7 @@ import { initSyncModal, setSyncStatus, scheduleSyncAfterSave, forceSyncNow } fro
 import { render, dayKey, fmtDay } from './render.js';
 import { initSwipe }       from './ui/swipe.js';
 import { initSpeech }      from './ui/speech.js';
+import { initHashtagAutocomplete } from './ui/hashtag.js';
 import { showToast, showConfirm, initExportModal, initShortcutsModal, initAboutModal, initClearBtn } from './ui/modals.js';
 import { initOnboarding }  from './ui/onboarding.js';
 
@@ -438,6 +439,7 @@ initExportModal({ render: doRender });
 initClearBtn({ render: doRender });
 initOnboarding();
 initSpeech({ getTextarea: () => textarea, showToast });
+initHashtagAutocomplete(textarea);
 initSyncModal({ renderFn: doRender });
 setOnSaveHook(scheduleSyncAfterSave);
 
