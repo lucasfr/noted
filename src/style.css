@@ -231,7 +231,7 @@ main { flex: 1; padding: 16px 16px 0; }
 .day-delete-btn svg { width: 16px; height: 16px; }
 .day-group { margin-bottom: 20px; }
 
-/* ── Swipe-to-reveal ── */
+/* ── Swipe-to-reveal (touch) / Hover actions (pointer) ── */
 .entry-swipe-wrap {
   position: relative; overflow: hidden;
   border-radius: var(--radius-sm); margin-bottom: 8px;
@@ -248,6 +248,39 @@ main { flex: 1; padding: 16px 16px 0; }
 .entry-action-edit:hover   { filter: brightness(1.1); }
 .entry-action-delete:hover { filter: brightness(1.1); }
 .entry-action-edit svg, .entry-action-delete svg { width: 20px; height: 20px; }
+
+/* On pointer devices: hide the slide-behind actions and show icon buttons on hover instead */
+@media (hover: hover) {
+  .entry-swipe-wrap { overflow: visible; }
+  .entry-actions { display: none; }
+
+  .entry-hover-actions {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    display: flex; gap: 4px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+  .entry-swipe-wrap:hover .entry-hover-actions,
+  .entry-swipe-wrap:focus-within .entry-hover-actions {
+    opacity: 1; pointer-events: all;
+  }
+  .entry-hover-btn {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    background: var(--bg2);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .entry-hover-btn svg { width: 15px; height: 15px; }
+  .entry-hover-btn:hover { background: var(--glass-hover); color: var(--text); }
+  .entry-hover-btn.delete:hover { background: rgba(192,57,43,0.12); color: #c0392b; border-color: rgba(192,57,43,0.3); }
+
+  /* Nudge entry text so it doesn't sit under the hover buttons */
+  .entry-swipe-wrap:hover .entry-body { padding-right: 72px; }
+}
 
 .entry {
   background: var(--entry-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
