@@ -6,8 +6,7 @@ function getKnownTags() {
   const seen = new Map(); // tag -> latest timestamp
   for (const e of entries) {
     for (const t of getTags(e.text)) {
-      const key = t.toLowerCase();
-      if (!seen.has(key) || e.timestamp > seen.get(key)) seen.set(key, e.timestamp);
+      if (!seen.has(t) || e.timestamp > seen.get(t)) seen.set(t, e.timestamp);
     }
   }
   return [...seen.entries()]
@@ -72,7 +71,7 @@ export function initHashtagAutocomplete(textarea) {
     if (fragment === null) { hide(); return; }
 
     const known   = getKnownTags();
-    const matches = known.filter(t => t.startsWith(fragment.toLowerCase()) && t !== fragment.toLowerCase());
+    const matches = known.filter(t => t.startsWith(fragment) && t !== fragment);
     if (!matches.length) { hide(); return; }
     show(matches.slice(0, 6));
   });
