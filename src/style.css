@@ -250,7 +250,7 @@ main { flex: 1; padding: 16px 16px 0; }
 .entry-action-edit svg, .entry-action-delete svg { width: 20px; height: 20px; }
 
 /* On pointer devices: hide the slide-behind actions and show icon buttons on hover instead */
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .entry-swipe-wrap { overflow: visible; }
   .entry-actions { display: none; }
 
