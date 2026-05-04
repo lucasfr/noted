@@ -160,11 +160,32 @@ export function render({ searchQuery, sortAsc, editingId, blurredIds, startEdit,
   });
 
   container.querySelectorAll('.entry-hover-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
       if (btn.dataset.action === 'edit') startEdit(btn.dataset.id);
       else deleteEntry(btn.dataset.id);
     });
   });
+
+  // Click entry to reveal/hide hover actions; click outside to dismiss
+  container.querySelectorAll('.entry-swipe-wrap').forEach(wrap => {
+    wrap.addEventListener('click', e => {
+      if (e.target.closest('.entry-hover-btn')) return;
+      if (e.target.closest('.task-checkbox')) return;
+      const isRevealed = wrap.classList.contains('revealed');
+      // Dismiss all others first
+      container.querySelectorAll('.entry-swipe-wrap.revealed')
+        .forEach(w => w.classList.remove('revealed'));
+      if (!isRevealed) wrap.classList.add('revealed');
+    });
+  });
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.entry-swipe-wrap')) {
+      container.querySelectorAll('.entry-swipe-wrap.revealed')
+        .forEach(w => w.classList.remove('revealed'));
+    }
+  }, { capture: true });
 
   container.querySelectorAll('.task-checkbox').forEach(btn => {
     btn.addEventListener('click', e => { e.stopPropagation(); toggleDone(btn.dataset.id); });
