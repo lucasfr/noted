@@ -1,5 +1,40 @@
 import { entries, SYMBOLS } from './storage.js';
 
+// ── Desktop context menu ─────────────────────────────────────────────────────
+let _ctxMenu = null;
+
+function showEntryContextMenu(x, y, id, { startEdit, deleteEntry }) {
+  removeContextMenu();
+  const menu = document.createElement('div');
+  menu.className = 'entry-ctx-menu';
+  menu.innerHTML = `
+    <button class="entry-ctx-item" data-action="edit">✏️ Edit</button>
+    <button class="entry-ctx-item delete" data-action="delete">🗑 Delete</button>
+  `;
+  document.body.appendChild(menu);
+  _ctxMenu = menu;
+
+  // Position, keeping within viewport
+  const { innerWidth: vw, innerHeight: vh } = window;
+  const { offsetWidth: mw, offsetHeight: mh } = menu;
+  menu.style.left = `${Math.min(x, vw - mw - 8)}px`;
+  menu.style.top  = `${Math.min(y, vh - mh - 8)}px`;
+
+  menu.querySelector('[data-action="edit"]').addEventListener('click', () => {
+    removeContextMenu(); startEdit(id);
+  });
+  menu.querySelector('[data-action="delete"]').addEventListener('click', () => {
+    removeContextMenu(); deleteEntry(id);
+  });
+
+  setTimeout(() => document.addEventListener('pointerdown', removeContextMenu, { once: true }), 0);
+}
+
+function removeContextMenu() {
+  _ctxMenu?.remove();
+  _ctxMenu = null;
+}
+
 // ── Formatting helpers ───────────────────────────────────────────────────────
 export function fmtTime(ts) {
   return new Date(ts).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
@@ -106,16 +141,6 @@ export function render({ searchQuery, sortAsc, editingId, blurredIds, startEdit,
               <span>Delete</span>
             </button>
           </div>
-          <div class="entry-hover-actions">
-            <button class="entry-hover-btn" data-action="edit" data-id="${e.id}" title="Edit">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>
-              <span>Edit</span>
-            </button>
-            <button class="entry-hover-btn delete" data-action="delete" data-id="${e.id}" title="Delete">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
-              <span>Delete</span>
-            </button>
-          </div>
           <div class="entry" data-type="${e.type}" data-id="${e.id}" ${e.done ? 'data-done="true"' : ''}>
             <span class="entry-time">${fmtTime(e.timestamp)}${e.type === 'task' && e.done && e.doneAt ? `<span class="done-time"> ✓ ${fmtTime(e.doneAt)}</span>` : ''}</span>
             ${e.type === 'task'
@@ -159,10 +184,12 @@ export function render({ searchQuery, sortAsc, editingId, blurredIds, startEdit,
     btn.addEventListener('click', () => deleteEntry(btn.dataset.id));
   });
 
-  container.querySelectorAll('.entry-hover-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (btn.dataset.action === 'edit') startEdit(btn.dataset.id);
-      else deleteEntry(btn.dataset.id);
+  // ── Desktop: right-click context menu ───────────────────────────────────
+  container.querySelectorAll('.entry-swipe-wrap').forEach(wrap => {
+    wrap.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      const id = wrap.dataset.id;
+      showEntryContextMenu(e.clientX, e.clientY, id, { startEdit, deleteEntry });
     });
   });
 
