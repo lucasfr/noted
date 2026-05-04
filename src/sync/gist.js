@@ -103,16 +103,22 @@ export async function pullFromGist() {
 // ── Merge: union by id, newer updatedAt wins on conflict ────────────────────
 // Falls back to timestamp for entries created before updatedAt was introduced.
 export function mergeEntries(local, remote) {
-  const map = new Map();
+  const map      = new Map();
+  const lastSync  = localStorage.getItem(SYNC_LAST_SYNC_KEY);
 
   // Seed with local
   local.forEach(e => map.set(e.id, e));
 
-  // Remote: only overwrites if it's newer (or local has no updatedAt)
+  // Remote: only add/overwrite under safe conditions
   remote.forEach(e => {
     const existing = map.get(e.id);
     if (!existing) {
-      map.set(e.id, e);
+      // Entry is absent locally. Only restore it if it was created AFTER the
+      // last sync — meaning it's a genuine new entry from another device.
+      // If it predates (or matches) the last sync, we deleted it locally.
+      if (!lastSync || (e.timestamp > new Date(lastSync).getTime())) {
+        map.set(e.id, e);
+      }
     } else {
       const localTs  = existing.updatedAt  || existing.timestamp;
       const remoteTs = e.updatedAt         || e.timestamp;
