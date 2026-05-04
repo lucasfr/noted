@@ -249,14 +249,17 @@ main { flex: 1; padding: 16px 16px 0; }
 .entry-action-delete:hover { filter: brightness(1.1); }
 .entry-action-edit svg, .entry-action-delete svg { width: 20px; height: 20px; }
 
+/* Hidden by default — only shown on pointer devices via media query below */
+.entry-hover-actions { display: none; }
+
 /* On pointer devices: hide the slide-behind actions and show icon buttons on hover instead */
 @media (hover: hover) and (pointer: fine) {
   .entry-swipe-wrap { overflow: visible; }
   .entry-actions { display: none; }
 
   .entry-hover-actions {
-    position: absolute; right: 0; top: 0; bottom: 0;
-    display: flex; width: 140px;
+    display: flex;
+    position: absolute; right: 0; top: 0; bottom: 0; width: 140px;
     opacity: 0; pointer-events: none;
     transition: opacity 0.15s ease;
   }
