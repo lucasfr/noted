@@ -1,7 +1,8 @@
 import {
-  SYNC_TOKEN_KEY, SYNC_REPO_KEY, SYNC_LAST_SYNC_KEY,
-  validateToken, pushToGist, pullFromGist, mergeEntries, fmtLastSync, syncOnConnect, pullOnStartup,
-} from '../sync/gist.js';
+  PROVIDERS, PROVIDER_KEY, DEFAULT_INTERVAL, SYNC_TIMER_KEY,
+  isConfigured, getActiveProvider, getActiveProviderId,
+  syncPush, syncPull, syncOnConnect, pullOnStartup, fmtLastSync,
+} from '../sync/index.js';
 import { entries, setEntries, save } from '../storage.js';
 import { showToast } from './modals.js';
 
@@ -18,32 +19,50 @@ export function setSyncStatus(state) {
   }[state] || '';
 }
 
-// ── Auto-sync hook (called from storage.save) ─────────────────────────────────
+// ── Auto-sync on save ─────────────────────────────────────────────────────────
 let syncTimeout = null;
-let _renderFn = null;
+let _renderFn   = null;
 
 export function scheduleSyncAfterSave() {
-  if (!localStorage.getItem(SYNC_TOKEN_KEY)) return;
+  if (!isConfigured()) return;
   clearTimeout(syncTimeout);
-  syncTimeout = setTimeout(async () => {
-    setSyncStatus('syncing');
-    const result = await pushToGist(entries);
-    if (result.ok && result.merged && result.merged.length !== entries.length) {
-      setEntries(result.merged);
-      save(showToast);
-      _renderFn?.();
-    }
-    setSyncStatus(result.ok ? 'ok' : 'error');
-    if (!result.ok) console.warn('[noted sync] push failed:', result.reason);
-  }, 800);
+  syncTimeout = setTimeout(() => _doSync(), 800);
+}
+
+// ── Periodic timer ────────────────────────────────────────────────────────────
+let timerInterval = null;
+
+function startTimer() {
+  clearInterval(timerInterval);
+  const ms = parseInt(localStorage.getItem(SYNC_TIMER_KEY)) || DEFAULT_INTERVAL;
+  timerInterval = setInterval(() => _doSync(), ms);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+// ── Core sync ─────────────────────────────────────────────────────────────────
+async function _doSync() {
+  if (!isConfigured()) return;
+  setSyncStatus('syncing');
+  const result = await syncPush(entries);
+  if (result.ok && result.merged && result.merged.length !== entries.length) {
+    setEntries(result.merged);
+    save(showToast);
+    _renderFn?.();
+  }
+  setSyncStatus(result.ok ? 'ok' : 'error');
+  if (!result.ok) console.warn('[noted sync] push failed:', result.error);
 }
 
 // ── Force immediate sync (⌘S) ─────────────────────────────────────────────────
 export async function forceSyncNow() {
-  if (!localStorage.getItem(SYNC_TOKEN_KEY)) { showToast('Sync not configured'); return; }
+  if (!isConfigured()) { showToast('Sync not configured'); return; }
   clearTimeout(syncTimeout);
   setSyncStatus('syncing');
-  const result = await pushToGist(entries);
+  const result = await syncPush(entries);
   if (result.ok && result.merged && result.merged.length !== entries.length) {
     setEntries(result.merged);
     save(showToast);
@@ -51,30 +70,37 @@ export async function forceSyncNow() {
   }
   setSyncStatus(result.ok ? 'ok' : 'error');
   if (result.ok) showToast('Synced ✓');
-  else showToast(`Sync failed: ${result.reason}`);
+  else showToast(`Sync failed: ${result.error}`);
 }
 
 // ── Manual pull ───────────────────────────────────────────────────────────────
-async function pullAndMerge(renderFn) {
-  if (!localStorage.getItem(SYNC_TOKEN_KEY)) { showToast('Configure sync first'); return; }
+async function pullAndMerge() {
+  if (!isConfigured()) { showToast('Configure sync first'); return; }
   setSyncStatus('syncing');
-  const result = await pullFromGist();
-  if (!result.ok) { setSyncStatus('error'); showToast(`Sync failed: ${result.reason}`); return; }
-  setEntries(mergeEntries(entries, result.entries));
+  const result = await syncPull(entries);
+  if (!result.ok) { setSyncStatus('error'); showToast(`Sync failed: ${result.error}`); return; }
+  setEntries(result.data);
   save(showToast);
-  renderFn();
+  _renderFn?.();
   setSyncStatus('ok');
-  showToast(`Pulled ${result.entries.length} entries ✓`);
+  showToast(`Pulled ${result.data.length} entries ✓`);
 }
 
-// ── Modal ─────────────────────────────────────────────────────────────────────
+// ── HTML injection ────────────────────────────────────────────────────────────
 function injectHTML() {
+  const intervalOptions = [
+    { value: 60_000,      label: '1 minute' },
+    { value: 5 * 60_000,  label: '5 minutes' },
+    { value: 15 * 60_000, label: '15 minutes' },
+    { value: 30 * 60_000, label: '30 minutes' },
+  ];
+
   const el = document.createElement('div');
   el.id        = 'sync-overlay';
   el.className = 'sync-overlay';
   el.innerHTML = `
     <div class="sync-card">
-      <span class="sync-title">GitHub Sync</span>
+      <span class="sync-title">Sync</span>
       <button class="sync-close" id="sync-close">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -82,30 +108,27 @@ function injectHTML() {
       </button>
 
       <div class="sync-section">
-        <p class="sync-desc">
-          Your entries sync to a private GitHub repository — only you can see it.
-          Any device with the same token stays in sync automatically.
-        </p>
-        <label class="sync-label" for="sync-token-input">Personal Access Token</label>
-        <div class="sync-token-row">
-          <input id="sync-token-input" type="password" class="sync-input"
-            placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-            autocomplete="off" autocorrect="off" spellcheck="false"/>
-          <button class="sync-btn sync-btn-secondary" id="sync-token-reveal">👁</button>
-        </div>
-        <p class="sync-hint">
-          Generate at <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener">github.com/settings/tokens</a>
-          with the <strong>repo</strong> scope. Classic tokens work fine.
-        </p>
+        <label class="sync-label" for="sync-provider-select">Provider</label>
+        <select id="sync-provider-select" class="sync-input">
+          <option value="">— choose —</option>
+          ${Object.entries(PROVIDERS).map(([id, p]) =>
+            `<option value="${id}">${p.label}</option>`
+          ).join('')}
+        </select>
       </div>
 
+      <div id="sync-fields-container"></div>
+
+      <div id="sync-hint-container" class="sync-hint" style="display:none"></div>
+
       <div class="sync-section">
-        <label class="sync-label">Private repository</label>
-        <input id="sync-repo-input" type="text" class="sync-input"
-          placeholder="username/repo-name" autocomplete="off" spellcheck="false"/>
-        <p class="sync-hint">
-          Create a private repo on GitHub first, then paste its name here (e.g. <strong>lucasfr/noted-sync</strong>).
-        </p>
+        <label class="sync-label" for="sync-interval-select">Auto-sync interval</label>
+        <select id="sync-interval-select" class="sync-input">
+          ${intervalOptions.map(o =>
+            `<option value="${o.value}">${o.label}</option>`
+          ).join('')}
+        </select>
+        <p class="sync-hint">Sync also runs on every save and on app open/close.</p>
       </div>
 
       <div class="sync-status-row">
@@ -113,14 +136,95 @@ function injectHTML() {
         <span id="sync-last-sync-display">—</span>
       </div>
 
+      <p class="sync-hint sync-password-hint">
+        Your browser or password manager can save these credentials.
+      </p>
+
       <div class="sync-actions">
         <button class="sync-btn sync-btn-primary"   id="sync-save-btn">Save &amp; connect</button>
         <button class="sync-btn sync-btn-secondary" id="sync-force-btn">↑ Force sync</button>
-        <button class="sync-btn sync-btn-secondary" id="sync-pull-btn">⬇ Pull from repo</button>
+        <button class="sync-btn sync-btn-secondary" id="sync-pull-btn">⬇ Pull remote</button>
         <button class="sync-btn sync-btn-danger"    id="sync-disconnect-btn">Disconnect</button>
       </div>
     </div>`;
   document.body.appendChild(el);
+}
+
+// ── Render provider config fields ─────────────────────────────────────────────
+function renderProviderFields(providerId) {
+  const container  = document.getElementById('sync-fields-container');
+  const hintEl     = document.getElementById('sync-hint-container');
+  container.innerHTML = '';
+
+  if (!providerId || !PROVIDERS[providerId]) {
+    hintEl.style.display = 'none';
+    return;
+  }
+
+  const provider = PROVIDERS[providerId];
+
+  provider.configFields.forEach(field => {
+    const section = document.createElement('div');
+    section.className = 'sync-section';
+    section.innerHTML = `
+      <label class="sync-label" for="sync-field-${field.key}">${field.label}</label>
+      <div class="sync-token-row">
+        <input
+          id="sync-field-${field.key}"
+          type="${field.type}"
+          class="sync-input"
+          placeholder="${field.placeholder}"
+          autocomplete="${field.autocomplete || 'off'}"
+          autocorrect="off"
+          spellcheck="false"
+          value="${localStorage.getItem(provider.KEYS[field.key]) || ''}"
+        />
+        ${field.type === 'password' ? `<button class="sync-btn sync-btn-secondary sync-reveal-btn" data-target="sync-field-${field.key}">👁</button>` : ''}
+      </div>`;
+    container.appendChild(section);
+  });
+
+  // Reveal toggles
+  container.querySelectorAll('.sync-reveal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.target);
+      if (input) input.type = input.type === 'password' ? 'text' : 'password';
+    });
+  });
+
+  hintEl.innerHTML     = provider.hint || '';
+  hintEl.style.display = provider.hint ? 'block' : 'none';
+}
+
+// ── Read current field values ─────────────────────────────────────────────────
+function readFieldValues(providerId) {
+  const provider = PROVIDERS[providerId];
+  if (!provider) return {};
+  const config = {};
+  provider.configFields.forEach(f => {
+    const input = document.getElementById(`sync-field-${f.key}`);
+    if (input) config[f.key] = input.value.trim();
+  });
+  return config;
+}
+
+// ── Save config to localStorage ───────────────────────────────────────────────
+function persistConfig(providerId, config) {
+  const provider = PROVIDERS[providerId];
+  provider.configFields.forEach(f => {
+    if (config[f.key]) localStorage.setItem(provider.KEYS[f.key], config[f.key]);
+  });
+  localStorage.setItem(PROVIDER_KEY, providerId);
+}
+
+// ── Clear all provider configs ────────────────────────────────────────────────
+function clearAllConfigs() {
+  Object.values(PROVIDERS).forEach(p => {
+    p.configFields.forEach(f => localStorage.removeItem(p.KEYS[f.key]));
+    if (p.KEYS.lastSync) localStorage.removeItem(p.KEYS.lastSync);
+    if (p.KEYS.session)  localStorage.removeItem(p.KEYS.session);
+  });
+  localStorage.removeItem(PROVIDER_KEY);
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
@@ -128,30 +232,29 @@ export function initSyncModal({ renderFn }) {
   _renderFn = renderFn;
   injectHTML();
 
-  const overlay    = document.getElementById('sync-overlay');
-  const tokenInput = document.getElementById('sync-token-input');
-  const repoInput  = document.getElementById('sync-repo-input');
-  const lastSyncEl = document.getElementById('sync-last-sync-display');
-  const saveBtn    = document.getElementById('sync-save-btn');
-
-  function isConnected() {
-    return !!(localStorage.getItem(SYNC_TOKEN_KEY) && localStorage.getItem(SYNC_REPO_KEY));
-  }
+  const overlay        = document.getElementById('sync-overlay');
+  const providerSelect = document.getElementById('sync-provider-select');
+  const intervalSelect = document.getElementById('sync-interval-select');
+  const lastSyncEl     = document.getElementById('sync-last-sync-display');
+  const saveBtn        = document.getElementById('sync-save-btn');
 
   function updateGating() {
-    const connected = isConnected();
+    const connected = isConfigured();
     document.getElementById('sync-force-btn').disabled      = !connected;
     document.getElementById('sync-pull-btn').disabled       = !connected;
     document.getElementById('sync-disconnect-btn').disabled = !connected;
   }
 
   function openModal() {
-    tokenInput.value       = localStorage.getItem(SYNC_TOKEN_KEY) || '';
-    repoInput.value        = localStorage.getItem(SYNC_REPO_KEY) || '';
-    lastSyncEl.textContent = fmtLastSync();
+    const activeId = getActiveProviderId();
+    providerSelect.value         = activeId || '';
+    intervalSelect.value         = localStorage.getItem(SYNC_TIMER_KEY) || DEFAULT_INTERVAL;
+    lastSyncEl.textContent       = fmtLastSync();
+    renderProviderFields(activeId);
     updateGating();
     overlay.classList.add('open');
   }
+
   function closeModal() { overlay.classList.remove('open'); }
 
   document.getElementById('sync-btn')?.addEventListener('click', openModal);
@@ -163,31 +266,39 @@ export function initSyncModal({ renderFn }) {
   document.getElementById('sync-close').addEventListener('click', closeModal);
   overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
 
-  document.getElementById('sync-token-reveal').addEventListener('click', () => {
-    tokenInput.type = tokenInput.type === 'password' ? 'text' : 'password';
+  providerSelect.addEventListener('change', () => {
+    renderProviderFields(providerSelect.value);
+  });
+
+  intervalSelect.addEventListener('change', () => {
+    localStorage.setItem(SYNC_TIMER_KEY, intervalSelect.value);
+    if (isConfigured()) startTimer();
   });
 
   saveBtn.addEventListener('click', async () => {
-    const token = tokenInput.value.trim();
-    const repo  = repoInput.value.trim();
-    if (!token) { showToast('Enter a token first'); return; }
-    if (!repo)  { showToast('Enter a repository name'); return; }
-    if (!repo.includes('/')) { showToast('Format: username/repo-name'); return; }
+    const providerId = providerSelect.value;
+    if (!providerId) { showToast('Choose a provider first'); return; }
+
+    const config   = readFieldValues(providerId);
+    const provider = PROVIDERS[providerId];
+    const missing  = provider.configFields.find(f => !config[f.key]);
+    if (missing) { showToast(`Enter your ${missing.label}`); return; }
 
     saveBtn.disabled    = true;
     saveBtn.textContent = 'Validating…';
-    const valid = await validateToken(token, repo);
+    const valid = await provider.init(config);
     saveBtn.disabled    = false;
     saveBtn.textContent = 'Save & connect';
 
-    if (!valid.ok) { showToast(valid.reason); return; }
+    if (!valid.ok) { showToast(valid.error); return; }
 
-    localStorage.setItem(SYNC_TOKEN_KEY, token);
-    localStorage.setItem(SYNC_REPO_KEY, repo);
+    persistConfig(providerId, config);
 
     closeModal();
     showToast('Sync connected ✓');
+    startTimer();
     setSyncStatus('syncing');
+
     const result = await syncOnConnect(entries);
     if (result.ok) {
       if (result.merged) {
@@ -200,7 +311,7 @@ export function initSyncModal({ renderFn }) {
       }
     }
     setSyncStatus(result.ok ? 'ok' : 'error');
-    if (!result.ok) showToast(`Sync failed: ${result.reason}`);
+    if (!result.ok) showToast(`Sync failed: ${result.error}`);
     updateGating();
   });
 
@@ -211,25 +322,42 @@ export function initSyncModal({ renderFn }) {
 
   document.getElementById('sync-pull-btn').addEventListener('click', async () => {
     closeModal();
-    await pullAndMerge(renderFn);
+    await pullAndMerge();
   });
 
   document.getElementById('sync-disconnect-btn').addEventListener('click', () => {
-    localStorage.removeItem(SYNC_TOKEN_KEY);
-    localStorage.removeItem(SYNC_REPO_KEY);
-    localStorage.removeItem(SYNC_LAST_SYNC_KEY);
-    tokenInput.value = '';
-    repoInput.value  = '';
+    clearAllConfigs();
+    stopTimer();
     closeModal();
     setSyncStatus('idle');
     showToast('Sync disconnected');
     updateGating();
   });
 
-  setSyncStatus(localStorage.getItem(SYNC_TOKEN_KEY) ? 'ok' : 'idle');
+  // Initialise status and timer
+  setSyncStatus(isConfigured() ? 'ok' : 'idle');
+  if (isConfigured()) startTimer();
 
-  // Auto-pull on startup: silently merge remote entries into local
-  if (localStorage.getItem(SYNC_TOKEN_KEY) && localStorage.getItem(SYNC_REPO_KEY)) {
+  // Sync on visibility change (open/close)
+  document.addEventListener('visibilitychange', () => {
+    if (!isConfigured()) return;
+    if (document.visibilityState === 'hidden') _doSync();
+    if (document.visibilityState === 'visible') {
+      setSyncStatus('syncing');
+      pullOnStartup(entries).then(result => {
+        if (result.ok && result.hasNew) {
+          setEntries(result.merged);
+          save(showToast);
+          renderFn();
+        }
+        setSyncStatus(result.ok ? 'ok' : 'error');
+        if (!result.ok) console.warn('[noted sync] visibility pull failed:', result.error);
+      });
+    }
+  });
+
+  // Startup pull
+  if (isConfigured()) {
     setSyncStatus('syncing');
     pullOnStartup(entries).then(result => {
       if (result.ok) {
@@ -241,7 +369,7 @@ export function initSyncModal({ renderFn }) {
         setSyncStatus('ok');
       } else {
         setSyncStatus('error');
-        console.warn('[noted sync] startup pull failed:', result.reason);
+        console.warn('[noted sync] startup pull failed:', result.error);
       }
     });
   }
