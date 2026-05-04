@@ -263,7 +263,7 @@ main { flex: 1; padding: 16px 16px 0; }
     opacity: 0; pointer-events: none;
     transition: opacity 0.15s ease;
   }
-  .entry-swipe-wrap.revealed .entry-hover-actions,
+  .entry-swipe-wrap:hover .entry-hover-actions,
   .entry-swipe-wrap:focus-within .entry-hover-actions {
     opacity: 1; pointer-events: all;
   }
