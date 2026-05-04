@@ -104,24 +104,27 @@ export async function pullFromGist() {
 // Falls back to timestamp for entries created before updatedAt was introduced.
 export function mergeEntries(local, remote) {
   const map      = new Map();
-  const lastSync  = localStorage.getItem(SYNC_LAST_SYNC_KEY);
+  const lastSync = localStorage.getItem(SYNC_LAST_SYNC_KEY);
+  const localIds = new Set(local.map(e => e.id));
 
   // Seed with local
   local.forEach(e => map.set(e.id, e));
 
-  // Remote: only add/overwrite under safe conditions
   remote.forEach(e => {
     const existing = map.get(e.id);
     if (!existing) {
-      // Entry is absent locally. Only restore it if it was created AFTER the
-      // last sync — meaning it's a genuine new entry from another device.
-      // If it predates (or matches) the last sync, we deleted it locally.
-      if (!lastSync || (e.timestamp > new Date(lastSync).getTime())) {
-        map.set(e.id, e);
-      }
+      // Entry absent locally. Treat as deleted only when ALL of:
+      //  1. This device has synced before (lastSync exists)
+      //  2. Local has entries (not a blank/fresh device)
+      //  3. The entry predates the last sync (so it would have been here if not deleted)
+      const wasSyncedBefore = !!lastSync;
+      const localHasEntries = local.length > 0;
+      const entryPredestsSync = lastSync && e.timestamp <= new Date(lastSync).getTime();
+      const likelyDeleted = wasSyncedBefore && localHasEntries && entryPredestsSync;
+      if (!likelyDeleted) map.set(e.id, e);
     } else {
-      const localTs  = existing.updatedAt  || existing.timestamp;
-      const remoteTs = e.updatedAt         || e.timestamp;
+      const localTs  = existing.updatedAt || existing.timestamp;
+      const remoteTs = e.updatedAt        || e.timestamp;
       if (remoteTs > localTs) map.set(e.id, e);
     }
   });
