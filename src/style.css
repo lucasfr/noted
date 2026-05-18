@@ -231,6 +231,13 @@ main { flex: 1; padding: 16px 16px 0; }
 .day-delete-btn svg { width: 16px; height: 16px; }
 .day-group { margin-bottom: 20px; }
 
+.hour-group { margin-bottom: 12px; }
+.hour-label {
+  font-family: var(--font-body); font-size: 11px; font-weight: 700;
+  color: var(--text-dim); letter-spacing: 0.6px;
+  padding: 0 2px; margin-bottom: 4px;
+}
+
 /* ── Swipe-to-reveal (touch) / Hover actions (pointer) ── */
 .entry-swipe-wrap {
   position: relative; overflow: hidden;
