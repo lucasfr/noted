@@ -68,7 +68,7 @@ export function dayMarkdown(dayEntries) {
       .forEach(hk => {
         lines.push(`   * ${hk}`);
         buckets[label][hk].forEach(e => {
-          lines.push(`      - ${e.type === 'task' ? '[ ]' : '[.]'} ${e.text}`);
+          lines.push(`      - ${e.type === 'task' ? '[ ]' : '[.]'} ${e.text} #${e.type}`);
         });
       });
   });
