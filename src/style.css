@@ -239,11 +239,38 @@ main { flex: 1; padding: 16px 16px 0; }
 .day-delete-btn svg { width: 16px; height: 16px; }
 .day-group { margin-bottom: 20px; }
 
-.hour-group { margin-bottom: 12px; }
+.hour-group { margin-bottom: 6px; }
 .hour-label {
-  font-family: var(--font-body); font-size: 11px; font-weight: 700;
-  color: var(--text-dim); letter-spacing: 0.6px;
-  padding: 0 2px; margin-bottom: 4px;
+  font-family: var(--font-body); font-size: 13px; font-weight: 700;
+  color: var(--text-muted); letter-spacing: 0.4px;
+  padding: 4px 6px 4px 4px; margin-bottom: 2px;
+  display: flex; align-items: center; gap: 6px;
+  cursor: pointer; user-select: none; border-radius: var(--radius-sm);
+  transition: background 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.hour-label:hover { background: var(--glass); color: var(--text); }
+.hour-label .hour-chevron {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; color: var(--text-dim);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.hour-group.collapsed .hour-chevron { transform: rotate(-90deg); }
+.hour-label .hour-count {
+  font-size: 10px; font-weight: 700; color: var(--text-dim);
+  background: var(--glass); border: 1px solid var(--glass-border);
+  border-radius: 20px; padding: 0px 6px; margin-left: 2px; letter-spacing: 0;
+}
+.hour-entries {
+  padding-left: 16px;
+  border-left: 2px solid var(--glass-border);
+  margin-left: 6px;
+  overflow: hidden;
+  transition: opacity 0.2s ease;
+}
+.hour-group.collapsed .hour-entries {
+  display: none;
 }
 
 /* ── Swipe-to-reveal (touch) / Hover actions (pointer) ── */

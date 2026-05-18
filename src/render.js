@@ -213,8 +213,12 @@ export function render({ searchQuery, sortAsc, editingId, blurredIds, startEdit,
           </div>`;
       }).join('');
       return `<div class="hour-group">
-        <div class="hour-label">${hk}</div>
-        ${entryRows}
+        <div class="hour-label">
+          <svg class="hour-chevron" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          ${hk}
+          <span class="hour-count">${hourEntries.length}</span>
+        </div>
+        <div class="hour-entries">${entryRows}</div>
       </div>`;
     }).join('');
 
@@ -232,6 +236,13 @@ export function render({ searchQuery, sortAsc, editingId, blurredIds, startEdit,
       ${rows}
     </div>`;
   }).join('');
+
+  // ── Hour group collapse ────────────────────────────────────────────────
+  container.querySelectorAll('.hour-label').forEach(label => {
+    label.addEventListener('click', () => {
+      label.closest('.hour-group').classList.toggle('collapsed');
+    });
+  });
 
   // ── Event listeners ──────────────────────────────────────────────────────
   container.querySelectorAll('.day-copy-md-btn').forEach(btn => {
