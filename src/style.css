@@ -273,10 +273,16 @@ main { flex: 1; padding: 16px 16px 0; }
 }
 .hour-entries {
   padding-left: 16px;
-  border-left: 2px solid var(--glass-border);
+  border-left: 2px solid #922B21;
   margin-left: 6px;
   overflow: hidden;
   transition: opacity 0.2s ease;
+}
+[data-theme="dark"] .hour-entries { border-left-color: #E8756A; }
+.day-entries {
+  padding-left: 16px;
+  border-left: 2px solid var(--accent2);
+  margin-left: 6px;
 }
 .hour-group.collapsed .hour-entries {
   display: none;
