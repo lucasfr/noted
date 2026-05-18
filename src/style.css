@@ -222,6 +222,14 @@ main { flex: 1; padding: 16px 16px 0; }
   border: 1px solid var(--glass-border); border-radius: 20px;
   padding: 1px 8px; margin-left: 8px; margin-right: auto; letter-spacing: 0;
 }
+.day-copy-md-btn {
+  background: none; border: none; cursor: pointer; color: var(--text-dim);
+  padding: 2px 4px; display: flex; align-items: center;
+  transition: color 0.15s; -webkit-tap-highlight-color: transparent;
+}
+.day-copy-md-btn:hover { color: var(--accent); }
+.day-copy-md-btn.copied { color: var(--accent2); }
+.day-copy-md-btn svg { width: 16px; height: 16px; }
 .day-delete-btn {
   background: none; border: none; cursor: pointer; color: var(--text-dim);
   padding: 2px 4px; display: flex; align-items: center;

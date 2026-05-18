@@ -35,6 +35,46 @@ function removeContextMenu() {
   _ctxMenu = null;
 }
 
+// ── Time-of-day helpers ─────────────────────────────────────────────────────
+const TOD_BUCKETS = [
+  { label: 'Night',     start:  0, end:  5 },
+  { label: 'Morning',  start:  6, end: 12 },
+  { label: 'Afternoon',start: 13, end: 17 },
+  { label: 'Evening',  start: 18, end: 23 },
+];
+
+function todLabel(ts) {
+  const h = new Date(ts).getHours();
+  return TOD_BUCKETS.find(b => h >= b.start && h <= b.end)?.label ?? 'Night';
+}
+
+export function dayMarkdown(dayEntries) {
+  // Group by TOD bucket, preserving order
+  const buckets = {};
+  dayEntries.forEach(e => {
+    const label = todLabel(e.timestamp);
+    if (!buckets[label]) buckets[label] = {};
+    const hk = hourKey(e.timestamp);
+    if (!buckets[label][hk]) buckets[label][hk] = [];
+    buckets[label][hk].push(e);
+  });
+
+  const lines = [];
+  TOD_BUCKETS.forEach(({ label }) => {
+    if (!buckets[label]) return;
+    lines.push(`* ${label}:`);
+    Object.keys(buckets[label])
+      .sort()
+      .forEach(hk => {
+        lines.push(`   * ${hk}`);
+        buckets[label][hk].forEach(e => {
+          lines.push(`      * ${e.text}`);
+        });
+      });
+  });
+  return lines.join('\n');
+}
+
 // ── Formatting helpers ───────────────────────────────────────────────────────
 export function fmtTime(ts) {
   return new Date(ts).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
@@ -182,6 +222,9 @@ export function render({ searchQuery, sortAsc, editingId, blurredIds, startEdit,
       <div class="day-label">
         ${fmtDay(day[0].timestamp)}
         <span class="day-count">${day.length}</span>
+        <button class="day-copy-md-btn" data-day="${dayKey(day[0].timestamp)}" title="Copy as Markdown">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        </button>
         <button class="day-delete-btn" data-day="${dayKey(day[0].timestamp)}" title="Delete this day">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
         </button>
@@ -191,6 +234,18 @@ export function render({ searchQuery, sortAsc, editingId, blurredIds, startEdit,
   }).join('');
 
   // ── Event listeners ──────────────────────────────────────────────────────
+  container.querySelectorAll('.day-copy-md-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dayEntries = filtered.filter(e => dayKey(e.timestamp) === btn.dataset.day);
+      dayEntries.sort((a, b) => a.timestamp - b.timestamp);
+      const md = dayMarkdown(dayEntries);
+      navigator.clipboard.writeText(md).then(() => {
+        btn.classList.add('copied');
+        setTimeout(() => btn.classList.remove('copied'), 1500);
+      });
+    });
+  });
+
   container.querySelectorAll('.day-delete-btn').forEach(btn => {
     btn.addEventListener('click', () => onDayDelete(btn.dataset.day, fmtDay(day_ts_for(btn.dataset.day, filtered))));
   });
